@@ -1,88 +1,87 @@
-import { Component, createSignal, For, createMemo } from 'solid-js';
+import { Component, createSignal, onMount, createEffect } from 'solid-js';
 import styles from './App.module.css';
+import PlayerSelection from './PlayerSelection';
+import GameBoard from './GameBoard';
+import { 
+  GameConfig, 
+  GameMode, 
+  PlayerType, 
+  PlayerColor,
+  AIModel 
+} from './game-types';
 
-type Player = 1 | 2;
-type Cell = Player | null;
-type Board = Cell[][];
-
-const ROWS = 6;
-const COLS = 7;
-
-const App: Component = () => {
-  // Create a 2D array for the board: 6 rows x 7 columns, filled with null
-  const createEmptyBoard = (): Board => 
-    Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
-  
-  const [board, setBoard] = createSignal<Board>(createEmptyBoard());
-  const [currentPlayer, setCurrentPlayer] = createSignal<Player>(1);
-  
-  // Create arrays for rows and columns once
-  const rows = Array(ROWS).fill(null);
-  const cols = Array(COLS).fill(null);
-  
-  const placeToken = (columnIndex: number) => {
-    // Create a deep copy of the current board
-    const newBoard = board().map(row => [...row]);
-    
-    // Find the lowest empty cell in the selected column
-    // Start from the bottom row (row 5) and move up
-    for (let rowIndex = ROWS - 1; rowIndex >= 0; rowIndex--) {
-      if (newBoard[rowIndex][columnIndex] === null) {
-        // Place the token and update the board
-        newBoard[rowIndex][columnIndex] = currentPlayer();
-        setBoard(newBoard);
-        
-        // Switch to the other player
-        setCurrentPlayer(prev => (prev === 1 ? 2 : 1));
-        return;
-      }
-    }
-    // If we get here, the column is full
+// Game route component to handle game configuration
+const GameRoute: Component = () => {
+  console.log("GameRoute component rendering");
+  // Extract gameId from the URL hash
+  const getGameIdFromHash = () => {
+    const match = window.location.hash.match(/\/game\/([^\/]+)/);
+    return match ? match[1] : null;
   };
   
-  const getCellValue = (rowIndex: number, colIndex: number) => {
-    return board()[rowIndex][colIndex];
+  const gameId = getGameIdFromHash();
+  console.log("GameRoute found gameId:", gameId);
+  
+  // Create a default game config
+  const createDefaultConfig = (): GameConfig => ({
+    mode: GameMode.HUMAN_VS_AI,
+    redPlayer: {
+      type: PlayerType.HUMAN,
+      color: PlayerColor.RED,
+    },
+    bluePlayer: {
+      type: PlayerType.AI,
+      color: PlayerColor.BLUE,
+      model: AIModel.CLAUDE,
+    }
+  });
+  
+  // For a real app, we would store this in a database or state management system
+  // Here we're just creating a default config for the demo
+  const [gameConfig] = createSignal<GameConfig>(createDefaultConfig());
+  
+  return <GameBoard gameConfig={gameConfig()} />;
+};
+
+// Home component not needed anymore
+
+const App: Component = () => {
+  console.log("App component rendering");
+  
+  // Use createSignal for reactivity
+  const [currentPath, setCurrentPath] = createSignal(window.location.hash);
+  
+  // Function to check hash and update state
+  const updatePath = () => {
+    console.log("Hash changed to:", window.location.hash);
+    setCurrentPath(window.location.hash);
+  };
+  
+  // Set up hash change listener
+  onMount(() => {
+    console.log("App mounted, hash is:", window.location.hash);
+    // Initial check
+    updatePath();
+    
+    // Listen for hash changes
+    window.addEventListener("hashchange", updatePath);
+  });
+  
+  // Create an effect that runs when path changes
+  createEffect(() => {
+    console.log("Current path changed to:", currentPath());
+  });
+  
+  // Determine which view to render based on path
+  const isGameRoute = () => {
+    const result = currentPath().includes("/game/");
+    console.log("isGameRoute() called, path:", currentPath(), "result:", result);
+    return result;
   };
   
   return (
     <div class={styles.App}>
-      <h1>Connect Four</h1>
-      
-      <div class={styles.board}>
-        {/* Render the game board */}
-        {rows.map((_, rowIndex) => (
-          <div class={styles.row}>
-            {cols.map((_, colIndex) => {
-              const cellValue = getCellValue(rowIndex, colIndex);
-              return (
-                <div class={styles.cell}>
-                  {cellValue !== null && (
-                    <div 
-                      class={`${styles.token} ${cellValue === 1 ? styles.player1 : styles.player2}`}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      
-      {/* Column buttons for placing tokens */}
-      <div class={styles.controls}>
-        {cols.map((_, colIndex) => (
-          <button 
-            class={styles.columnButton}
-            onClick={() => placeToken(colIndex)}
-          >
-            ↓
-          </button>
-        ))}
-      </div>
-      
-      <div class={styles.status}>
-        <p>Current Player: {currentPlayer() === 1 ? 'Red' : 'Blue'}</p>
-      </div>
+      {isGameRoute() ? <GameRoute /> : <PlayerSelection />}
     </div>
   );
 };

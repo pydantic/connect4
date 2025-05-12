@@ -4,23 +4,33 @@
   max-width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 h1 {
   color: #333;
   margin-bottom: 1.5rem;
+  width: 100%;
+  text-align: center;
 }
 
 .board {
   display: flex;
   flex-direction: column;
-  background-color: #2a9d4e; /* Changed from blue to green */
+  background-color: #2a9d4e; /* Green board */
   border-radius: 10px;
   padding: 10px;
   margin: 0 auto 1rem auto;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   max-width: 500px;
+  width: 100%; /* Full width up to max-width */
   aspect-ratio: 7/6; /* Maintain the 7:6 aspect ratio of the board */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .row {
@@ -56,15 +66,16 @@ h1 {
   height: 80%;
   border-radius: 50%;
   z-index: 1;
+  transition: transform 0.3s ease;
 }
 
 .player1 {
-  background-color: #ff3b3b;
+  background-color: #ff3b3b; /* Red */
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .player2 {
-  background-color: #3b83ff;
+  background-color: #3b83ff; /* Blue */
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -87,14 +98,93 @@ h1 {
   transition: background-color 0.2s;
 }
 
-.columnButton:hover {
+.columnButton:hover:not(:disabled) {
   background-color: #e0e0e0;
 }
 
+.columnButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .status {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
   font-size: 1.2rem;
   font-weight: bold;
+  color: #333;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: all 0.3s ease;
+}
+
+.status p {
+  margin: 0;
+}
+
+.resetButton {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #2a9d4e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.resetButton:hover {
+  background-color: #238a42;
+}
+
+.gameContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.gameControls {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Winning animation */
+@keyframes winPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.winnerMessage {
+  animation: winPulse 1.5s infinite ease-in-out;
+  background-color: #f8f4b8;
+  color: #d97706;
+  border-left: 4px solid #d97706;
+}
+
+.drawMessage {
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border-left: 4px solid #718096;
 }
 
 /* Media query for smaller screens */
@@ -106,6 +196,20 @@ h1 {
   h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .gameContainer {
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
+  
+  .board {
+    padding: 8px;
+    margin: 0 0 1rem 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .columnButton {
@@ -113,7 +217,17 @@ h1 {
     font-size: 1rem;
   }
   
+  .controls {
+    margin: 0 0 1rem 0;
+    width: 100%;
+  }
+  
   .status {
     font-size: 1rem;
+    padding: 0.5rem;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 }

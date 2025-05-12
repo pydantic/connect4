@@ -1,0 +1,141 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.selectionCard {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.modeSelection {
+  margin-bottom: 2rem;
+}
+
+.modeButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modeButtons button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #2a9d4e;
+  background-color: #ffffff;
+  color: #2a9d4e;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modeButtons button:hover {
+  background-color: #e8f5ee;
+}
+
+.modeButtons button.selectedMode {
+  background-color: #2a9d4e;
+  color: white;
+}
+
+.playerSelection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.playerConfig {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+}
+
+.playerConfig h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.playerConfig p {
+  margin: 0;
+  color: #666;
+}
+
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: white;
+}
+
+.startButton {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #2a9d4e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.startButton:hover {
+  background-color: #238a42;
+}
+
+@media (min-width: 768px) {
+  .playerSelection {
+    flex-direction: row;
+  }
+  
+  .playerConfig {
+    flex: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 8px;
+    width: calc(100% - 16px);
+  }
+  
+  .selectionCard {
+    padding: 1.5rem;
+    max-width: calc(100% - 16px);
+  }
+  
+  .modeButtons button {
+    padding: 0.5rem 1rem;
+  }
+}

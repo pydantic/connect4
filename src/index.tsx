@@ -2,8 +2,9 @@
 import { render } from 'solid-js/web';
 
 import './index.css';
-import App from './App';
+import SimpleRoute from './SimpleRoute';
 
+// Get root element
 const root = document.getElementById('root');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
@@ -12,4 +13,5 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+// Simple render with our custom router
+render(() => <SimpleRoute />, root!);
