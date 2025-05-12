@@ -33,8 +33,10 @@ interface Move {
 }
 
 // Interface for game state response
-export interface GameStateResponse {
+export interface GameState {
   moves: Move[]
+  mode: 'human-vs-ai' | 'ai-vs-ai'
+  status: 'playing' | 'red-win' | 'blue-win' | 'draw'
 }
 
 /**
@@ -43,7 +45,7 @@ export interface GameStateResponse {
  * @param gameId The unique identifier for the game
  * @returns A Promise that resolves to the game state from the server
  */
-export async function getGameState(gameId: string): Promise<GameStateResponse> {
+export async function getGameState(gameId: string): Promise<GameState> {
   // Make the API request
   const response = await fetch(`/api/games/${gameId}/state`)
 
@@ -52,7 +54,7 @@ export async function getGameState(gameId: string): Promise<GameStateResponse> {
   }
 
   // Parse the response
-  const data: GameStateResponse = await response.json()
+  const data: GameState = await response.json()
   return data
 }
 
@@ -68,7 +70,7 @@ interface AIResponse {
  * @param columnIndex The column index (0-6) where the player wants to place their token
  * @returns A Promise that resolves to the updated game state from the server
  */
-export async function makeMove(gameId: string, columnIndex: number): Promise<GameStateResponse> {
+export async function makeMove(gameId: string, columnIndex: number): Promise<GameState> {
   // Convert column index (0-6) to column number (1-7)
   let url = `/api/games/${gameId}/move?column=${columnIndex + 1}`
 
@@ -80,6 +82,6 @@ export async function makeMove(gameId: string, columnIndex: number): Promise<Gam
   }
 
   // Parse the response (which has the same format as getGameState)
-  const data: GameStateResponse = await response.json()
+  const data: GameState = await response.json()
   return data
 }

@@ -205,6 +205,21 @@ h1 {
   text-align: left;
 }
 
+.aiVsAiMessage {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border-left: 4px solid #0ea5e9;
+  margin: 1rem auto;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+}
+
 /* Media query for smaller screens */
 @media (max-width: 600px) {
   .App {

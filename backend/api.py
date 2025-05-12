@@ -37,6 +37,7 @@ class Move(BaseModel):
 class GameState(BaseModel):
     moves: list[Move]
     mode: Mode
+    status: Literal['playing', 'red-win', 'blue-win', 'draw'] = 'playing'
 
 
 # until we have a db
