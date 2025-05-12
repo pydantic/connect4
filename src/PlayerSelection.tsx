@@ -30,12 +30,12 @@ const PlayerSelection: Component = () => {
     
     // Generate a unique game ID
     const gameId = uuidv4();
-    
+
     console.log("Starting game with ID:", gameId);
-    
+
     // Navigate to the game route with the game ID
-    // For simplified routing, use hash directly
-    window.location.hash = `/game/${gameId}`;
+    // Use the navigate function we added to window in SimpleRoute
+    window.navigate(`/connect4/game/${gameId}`);
   };
   
   return (

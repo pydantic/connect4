@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 - `npm install` - Install dependencies
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server - do not use this as it will run forever!
 - `npm run build` - Build for production
 - `npm run serve` - Preview production build
 

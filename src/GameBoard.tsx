@@ -18,9 +18,9 @@ interface GameBoardProps {
 }
 
 const GameBoard: Component<GameBoardProps> = (props) => {
-  console.log("GameBoard component rendering with hash:", window.location.hash);
-  // Extract gameId from hash for simplified routing
-  const gameIdMatch = window.location.hash.match(/\/game\/([^\/]+)/);
+  console.log("GameBoard component rendering with path:", window.location.pathname);
+  // Extract gameId from path
+  const gameIdMatch = window.location.pathname.match(/\/connect4\/game\/([^\/]+)/);
   const gameId = gameIdMatch ? gameIdMatch[1] : "unknown-game";
   console.log("Extracted gameId:", gameId);
   
@@ -230,7 +230,7 @@ const GameBoard: Component<GameBoardProps> = (props) => {
       </div>
       
       <div class={styles.gameControls}>
-        <a href="#/" class={styles.resetButton}>Return to Home</a>
+        <a href="/" onClick={(e) => { e.preventDefault(); window.navigate('/'); }} class={styles.resetButton}>Return to Home</a>
       </div>
     </div>
   );
