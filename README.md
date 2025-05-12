@@ -1,3 +1,10 @@
+# Backend
+Currently, this just statelessly implements the connect4 game logic, and serves that over an API endpoint.
+
+Run `make install`, then `uv run connect4/server.py`, then go to `http://127.0.0.1:8000/docs#/` to manually make
+requests to the dev server.
+
+# Frontend
 ## Usage
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
