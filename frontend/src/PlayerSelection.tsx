@@ -12,6 +12,7 @@ const PlayerSelection: Component = () => {
   const [redPlayerModel, setRedPlayerModel] = createSignal<AIModel>(AIModel.CLAUDE)
   const [bluePlayerModel, setBluePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
+  const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
 
   onMount(() => {
     console.log('PlayerSelection component mounted')
@@ -22,18 +23,25 @@ const PlayerSelection: Component = () => {
 
   const startGame = async () => {
     setErrorMessage(null)
+    setIsStartingGame(true)
+    
     try {
+      // Get the backend mode string format
+      const backendModeParam = gameMode() === GameMode.HUMAN_VS_AI ? 'human-vs-ai' : 'ai-vs-ai'
+      console.log(`Starting game with mode: ${backendModeParam}`)
+      
       // Get a game ID from the server
       const gameId = await initializeGame(gameMode())
+      console.log('Got game ID from server:', gameId)
 
-      console.log('Starting game with ID:', gameId)
-
-      // Navigate to the game route with the game ID
-      // Use the navigate function we added to window in SimpleRoute
-      window.navigate(`/connect4/game/${gameId}`)
+      // Use the same mode string format for routing
+      const route = `/connect4/${backendModeParam}/${gameId}`
+      console.log(`Navigating to route: ${route}`)
+      window.navigate(route)
     } catch (error) {
       console.error('Failed to start game:', error)
       setErrorMessage(`Failed to start the game: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      setIsStartingGame(false)
     }
   }
 
@@ -50,12 +58,14 @@ const PlayerSelection: Component = () => {
             <button
               class={gameMode() === GameMode.HUMAN_VS_AI ? styles.selectedMode : ''}
               onClick={() => setGameMode(GameMode.HUMAN_VS_AI)}
+              disabled={isStartingGame()}
             >
               Human vs AI
             </button>
             <button
               class={gameMode() === GameMode.AI_VS_AI ? styles.selectedMode : ''}
               onClick={() => setGameMode(GameMode.AI_VS_AI)}
+              disabled={isStartingGame()}
             >
               AI vs AI
             </button>
@@ -66,7 +76,11 @@ const PlayerSelection: Component = () => {
           <Show when={gameMode() === GameMode.AI_VS_AI}>
             <div class={styles.playerConfig}>
               <h3>Red Player (AI)</h3>
-              <select value={redPlayerModel()} onChange={(e) => setRedPlayerModel(e.target.value as AIModel)}>
+              <select 
+                value={redPlayerModel()} 
+                onChange={(e) => setRedPlayerModel(e.target.value as AIModel)}
+                disabled={isStartingGame()}
+              >
                 <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>
               </select>
             </div>
@@ -81,14 +95,22 @@ const PlayerSelection: Component = () => {
 
           <div class={styles.playerConfig}>
             <h3>Blue Player (AI)</h3>
-            <select value={bluePlayerModel()} onChange={(e) => setBluePlayerModel(e.target.value as AIModel)}>
+            <select 
+              value={bluePlayerModel()} 
+              onChange={(e) => setBluePlayerModel(e.target.value as AIModel)}
+              disabled={isStartingGame()}
+            >
               <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>
             </select>
           </div>
         </div>
 
-        <button class={styles.startButton} onClick={startGame}>
-          Start Game
+        <button 
+          class={styles.startButton} 
+          onClick={startGame}
+          disabled={isStartingGame()}
+        >
+          {isStartingGame() ? 'Starting Game...' : 'Start Game'}
         </button>
 
         {/* Error message display */}

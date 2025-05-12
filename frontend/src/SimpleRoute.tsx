@@ -1,7 +1,8 @@
 import { Component, createSignal, onMount, onCleanup, createEffect } from 'solid-js'
 import PlayerSelection from './PlayerSelection'
 import HomePage from './HomePage'
-import GameBoard from './GameBoard'
+import HumanAIPlay from './HumanAIPlay'
+import AivsAiPlay from './AivsAiPlay'
 import { GameConfig, GameMode, PlayerType, PlayerColor, AIModel } from './game-types'
 
 const SimpleRoute: Component = () => {
@@ -35,7 +36,10 @@ const SimpleRoute: Component = () => {
     // Initial route check
     const currentPath = window.location.pathname
     // If not at a known route, redirect to home
-    if (currentPath !== '/' && currentPath !== '/connect4' && !currentPath.startsWith('/connect4/game/')) {
+    if (currentPath !== '/' && currentPath !== '/connect4' && 
+        !currentPath.startsWith('/connect4/game/') && 
+        !currentPath.startsWith('/connect4/ai-vs-ai/') &&
+        !currentPath.startsWith('/connect4/human-vs-ai/')) {
       // Reset to home
       navigate('/')
     }
@@ -70,13 +74,27 @@ const SimpleRoute: Component = () => {
   const renderContent = () => {
     const currentRoute = route()
 
-    if (currentRoute.startsWith('/connect4/game/')) {
-      console.log('Rendering GameBoard')
-      return <GameBoard gameConfig={gameConfig()} />
-    } else if (currentRoute === '/connect4') {
+    // New specific routes for game modes
+    if (currentRoute.startsWith('/connect4/human-vs-ai/')) {
+      console.log('Rendering HumanAIPlay')
+      return <HumanAIPlay gameConfig={gameConfig()} />
+    } 
+    else if (currentRoute.startsWith('/connect4/ai-vs-ai/')) {
+      console.log('Rendering AivsAiPlay')
+      return <AivsAiPlay gameConfig={gameConfig()} />
+    }
+    // Legacy route support
+    else if (currentRoute.startsWith('/connect4/game/')) {
+      // Detect mode from URL and render appropriate component
+      // We'll assume human-vs-ai for legacy routes
+      console.log('Rendering legacy game route as HumanAIPlay')
+      return <HumanAIPlay gameConfig={gameConfig()} />
+    } 
+    else if (currentRoute === '/connect4') {
       console.log('Rendering PlayerSelection')
       return <PlayerSelection />
-    } else {
+    } 
+    else {
       console.log('Rendering HomePage')
       return <HomePage />
     }
