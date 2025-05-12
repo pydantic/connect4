@@ -1,4 +1,4 @@
-import { Board, PlayerColor, ROWS, COLS } from './game-types';
+import { Board, PlayerColor, ROWS, COLS } from './game-types'
 
 /**
  * Check if the current board state has a winner
@@ -9,14 +9,14 @@ export function checkForWinner(board: Board): PlayerColor | null {
   // Check horizontal
   for (let row = 0; row < ROWS; row++) {
     for (let col = 0; col <= COLS - 4; col++) {
-      const cell = board[row][col];
+      const cell = board[row][col]
       if (
         cell !== null &&
         cell === board[row][col + 1] &&
         cell === board[row][col + 2] &&
         cell === board[row][col + 3]
       ) {
-        return cell;
+        return cell
       }
     }
   }
@@ -24,14 +24,14 @@ export function checkForWinner(board: Board): PlayerColor | null {
   // Check vertical
   for (let row = 0; row <= ROWS - 4; row++) {
     for (let col = 0; col < COLS; col++) {
-      const cell = board[row][col];
+      const cell = board[row][col]
       if (
         cell !== null &&
         cell === board[row + 1][col] &&
         cell === board[row + 2][col] &&
         cell === board[row + 3][col]
       ) {
-        return cell;
+        return cell
       }
     }
   }
@@ -39,14 +39,14 @@ export function checkForWinner(board: Board): PlayerColor | null {
   // Check diagonal (down-right)
   for (let row = 0; row <= ROWS - 4; row++) {
     for (let col = 0; col <= COLS - 4; col++) {
-      const cell = board[row][col];
+      const cell = board[row][col]
       if (
         cell !== null &&
         cell === board[row + 1][col + 1] &&
         cell === board[row + 2][col + 2] &&
         cell === board[row + 3][col + 3]
       ) {
-        return cell;
+        return cell
       }
     }
   }
@@ -54,19 +54,19 @@ export function checkForWinner(board: Board): PlayerColor | null {
   // Check diagonal (up-right)
   for (let row = 3; row < ROWS; row++) {
     for (let col = 0; col <= COLS - 4; col++) {
-      const cell = board[row][col];
+      const cell = board[row][col]
       if (
         cell !== null &&
         cell === board[row - 1][col + 1] &&
         cell === board[row - 2][col + 2] &&
         cell === board[row - 3][col + 3]
       ) {
-        return cell;
+        return cell
       }
     }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -76,7 +76,7 @@ export function checkForWinner(board: Board): PlayerColor | null {
  */
 export function checkForDraw(board: Board): boolean {
   // If any cell in the top row is empty, the board is not full
-  return !board[0].some(cell => cell === null);
+  return !board[0].some((cell) => cell === null)
 }
 
 /**
@@ -86,7 +86,7 @@ export function checkForDraw(board: Board): boolean {
  * @returns True if the column has at least one empty cell
  */
 export function isColumnAvailable(board: Board, columnIndex: number): boolean {
-  return board[0][columnIndex] === null;
+  return board[0][columnIndex] === null
 }
 
 /**
@@ -95,13 +95,13 @@ export function isColumnAvailable(board: Board, columnIndex: number): boolean {
  * @returns Array of available column indices
  */
 export function getAvailableColumns(board: Board): number[] {
-  const availableColumns: number[] = [];
-  
+  const availableColumns: number[] = []
+
   for (let col = 0; col < COLS; col++) {
     if (isColumnAvailable(board, col)) {
-      availableColumns.push(col);
+      availableColumns.push(col)
     }
   }
-  
-  return availableColumns;
+
+  return availableColumns
 }

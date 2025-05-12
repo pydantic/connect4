@@ -192,36 +192,36 @@ h1 {
   .App {
     padding: 0.5rem;
   }
-  
+
   h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     padding-left: 8px;
     padding-right: 8px;
   }
-  
+
   .gameContainer {
     padding: 0 8px;
     box-sizing: border-box;
   }
-  
+
   .board {
     padding: 8px;
     margin: 0 0 1rem 0;
     max-width: 100%;
     box-sizing: border-box;
   }
-  
+
   .columnButton {
     height: 36px;
     font-size: 1rem;
   }
-  
+
   .controls {
     margin: 0 0 1rem 0;
     width: 100%;
   }
-  
+
   .status {
     font-size: 1rem;
     padding: 0.5rem;

@@ -26,25 +26,27 @@ export enum PlayerColor {
 
 // Player configuration
 export interface PlayerConfig {
-  type: PlayerType;
-  color: PlayerColor;
-  model?: AIModel; // Only needed for AI players
+  type: PlayerType
+  color: PlayerColor
+  model?: AIModel // Only needed for AI players
 }
 
 // Game configuration
 export interface GameConfig {
-  mode: GameMode;
-  redPlayer: PlayerConfig;
-  bluePlayer: PlayerConfig;
+  mode: GameMode
+  redPlayer: PlayerConfig
+  bluePlayer: PlayerConfig
 }
 
 // Board and game state types
-export type Cell = PlayerColor | null;
-export type Board = Cell[][];
+export type Cell = PlayerColor | null
+export type Board = Cell[][]
 
-export const ROWS = 6;
-export const COLS = 7;
+export const ROWS = 6
+export const COLS = 7
 
 // Create an empty game board
-export const createEmptyBoard = (): Board => 
-  Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
+export const createEmptyBoard = (): Board =>
+  Array(ROWS)
+    .fill(null)
+    .map(() => Array(COLS).fill(null))

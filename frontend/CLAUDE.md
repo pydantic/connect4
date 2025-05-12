@@ -3,11 +3,13 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
+
 - `npm install` - Install dependencies
 - `npm run build` - Build for production
 - `npm run typecheck` - Run the TypeScript type checker
 
 ## Code Style
+
 - **Formatting**: Use consistent indentation (2 spaces)
 - **Imports**: Group imports by type (SolidJS, third-party, internal)
 - **Types**: Use TypeScript with strict mode enabled
@@ -18,4 +20,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **File Structure**: One component per file, named the same as the component
 
 ## Project Context
+
 This is a SolidJS application using TypeScript and Vite as the build tool. Follow SolidJS best practices for reactivity and component design.
