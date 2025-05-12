@@ -1,23 +1,26 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "connect4",
+  "private": true,
   "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "format": "prettier --write -- .",
+    "lint": "prettier --check -- .",
+    "typecheck": "npm run --workspace frontend typecheck",
+    "dev": "npm run --workspace frontend dev",
+    "build": "npm run --workspace frontend build"
   },
-  "license": "MIT",
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "printWidth": 119,
+    "bracketSpacing": true
+  },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "vite": "^6.0.0",
-    "vite-plugin-solid": "^2.11.6"
-  },
-  "dependencies": {
-    "@types/uuid": "^10.0.0",
-    "solid-js": "^1.9.5",
-    "uuid": "^11.1.0"
+    "prettier": "^3.5.3"
   }
 }
