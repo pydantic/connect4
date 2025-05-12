@@ -1,4 +1,60 @@
-import { AIModel, Board, PlayerColor } from './game-types'
+import { AIModel, Board, PlayerColor, GameMode } from './game-types'
+
+// Interface for the start game response
+interface StartGameResponse {
+  gameID: string
+}
+
+/**
+ * Initialize a new game with the specified game mode
+ *
+ * @param mode The game mode (HUMAN_VS_AI or AI_VS_AI)
+ * @returns A Promise that resolves to the new game ID from the server
+ */
+export async function initializeGame(mode: GameMode): Promise<string> {
+  // Convert the game mode to a format suitable for the API
+  const gameModeParam = mode === GameMode.HUMAN_VS_AI ? 'human-vs-ai' : 'ai-vs-ai'
+
+  // Make the API request
+  const response = await fetch(`/api/games/start?mode=${gameModeParam}`)
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
+  }
+
+  // Parse the response
+  const data: StartGameResponse = await response.json()
+  return data.gameID
+}
+
+interface Move {
+  player: 'red' | 'blue'
+  column: number // 1-7 representing columns
+}
+
+// Interface for game state response
+export interface GameStateResponse {
+  moves: Move[]
+}
+
+/**
+ * Get the current state of a game
+ *
+ * @param gameId The unique identifier for the game
+ * @returns A Promise that resolves to the game state from the server
+ */
+export async function getGameState(gameId: string): Promise<GameStateResponse> {
+  // Make the API request
+  const response = await fetch(`/api/games/${gameId}/state`)
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
+  }
+
+  // Parse the response
+  const data: GameStateResponse = await response.json()
+  return data
+}
 
 // Interface for the response from the API
 interface AIResponse {
@@ -6,53 +62,26 @@ interface AIResponse {
 }
 
 /**
- * Get the next move from the AI for the current board state
+ * Make a move in the game and get updated game state
  *
- * @param gameId A unique identifier for the current game
- * @param model The AI model to use
- * @param player The player color (RED or BLUE)
- * @param board The current board state
- * @returns A Promise that resolves to the column index where the AI wants to place its token
+ * @param gameId The unique identifier for the game
+ * @param columnIndex The column index (0-6) where the player wants to place their token
+ * @returns A Promise that resolves to the updated game state from the server
  */
-export async function getAIMove(gameId: string, model: AIModel, player: PlayerColor, board: Board): Promise<number> {
-  try {
-    // Convert the model name to a format suitable for the API
-    const modelSlug = model.replace(/\s+/g, '-').toLowerCase()
+export async function makeMove(gameId: string, columnIndex: number): Promise<GameStateResponse> {
+  // Convert column index (0-6) to column number (1-7)
+  const columnNumber = columnIndex + 1
 
-    // Convert the player value (1 or 2) to "red" or "blue"
-    const playerColor = player === PlayerColor.RED ? 'red' : 'blue'
+  // Make the API request
+  const response = await fetch(`/api/games/${gameId}/move?column=${columnNumber}`, {
+    method: 'POST',
+  })
 
-    // Prepare the API URL
-    const url = `/api/play/${gameId}/${playerColor}`
-
-    // Prepare the request body
-    const requestBody = {
-      model: modelSlug,
-      board: board,
-    }
-
-    // Make the API request
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    })
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`)
-    }
-
-    // Parse the response
-    const data: AIResponse = await response.json()
-
-    return data.column
-  } catch (error) {
-    console.error('Error getting AI move:', error)
-
-    // In case of error, return a random valid column
-    // This is a fallback to prevent the game from breaking
-    return Math.floor(Math.random() * 7)
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
   }
+
+  // Parse the response (which has the same format as getGameState)
+  const data: GameStateResponse = await response.json()
+  return data
 }

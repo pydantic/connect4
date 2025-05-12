@@ -1,6 +1,6 @@
 import { Component, createSignal, Show, For, onMount } from 'solid-js'
-import { v4 as uuidv4 } from 'uuid'
 import { GameMode, AIModel, PlayerType, PlayerColor, PlayerConfig, GameConfig } from './game-types'
+import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
 
 // For debugging
@@ -19,18 +19,20 @@ const PlayerSelection: Component = () => {
   // Available AI models
   const aiModels = [AIModel.GPT_4, AIModel.GPT_3_5, AIModel.CLAUDE, AIModel.GEMINI]
 
-  const startGame = () => {
-    // In a real application, you would save the game configuration to a state store
-    // or send it to a backend service
+  const startGame = async () => {
+    try {
+      // Get a game ID from the server
+      const gameId = await initializeGame(gameMode())
 
-    // Generate a unique game ID
-    const gameId = uuidv4()
+      console.log('Starting game with ID:', gameId)
 
-    console.log('Starting game with ID:', gameId)
-
-    // Navigate to the game route with the game ID
-    // Use the navigate function we added to window in SimpleRoute
-    window.navigate(`/connect4/game/${gameId}`)
+      // Navigate to the game route with the game ID
+      // Use the navigate function we added to window in SimpleRoute
+      window.navigate(`/connect4/game/${gameId}`)
+    } catch (error) {
+      console.error('Failed to start game:', error)
+      alert('Failed to start the game. Please try again.')
+    }
   }
 
   return (

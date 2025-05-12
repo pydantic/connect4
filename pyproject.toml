@@ -7,7 +7,7 @@ dependencies = [
     "uvicorn >= 0.34.2",
     "fastapi >= 0.115.12",
     "pydantic >= 2.11.4",
-    "logfire[fastapi] >= 3.15.1"
+    "logfire[fastapi] >= 3.15.1",
 ]
 requires-python = ">=3.11"
 authors = [
@@ -16,15 +16,8 @@ authors = [
 ]
 license = "MIT"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [dependency-groups]
-dev = [
-    "ruff >= 0.8.3",
-    "pyright >= 1.1.397",
-]
+dev = ["ruff >= 0.8.3", "pyright >= 1.1.397"]
 
 [tool.pyright]
 typeCheckingMode = "strict"
@@ -45,14 +38,11 @@ extend-select = [
     "C90",    # https://docs.astral.sh/ruff/rules/#mccabe-c90
     "UP",     # https://docs.astral.sh/ruff/rules/#pyupgrade-up
     "I",      # https://docs.astral.sh/ruff/rules/#isort-i
-    "D",      # https://docs.astral.sh/ruff/rules/#pydocstyle-d
     "DTZ005", # https://docs.astral.sh/ruff/rules/call-datetime-now-without-tzinfo/
     "FA",     # https://docs.astral.sh/ruff/rules/#flake8-future-annotations-fa
 ]
 flake8-quotes = { inline-quotes = "single", multiline-quotes = "double" }
-isort = { combine-as-imports = true, known-first-party = [
-    "connect4",
-] }
+isort = { combine-as-imports = true, known-first-party = ["connect4"] }
 mccabe = { max-complexity = 14 }
 ignore = [
     "D107", # ignore missing docstring in __init__ methods
