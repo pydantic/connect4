@@ -11,6 +11,7 @@ const PlayerSelection: Component = () => {
   const [gameMode, setGameMode] = createSignal<GameMode>(GameMode.HUMAN_VS_AI)
   const [redPlayerModel, setRedPlayerModel] = createSignal<AIModel>(AIModel.CLAUDE)
   const [bluePlayerModel, setBluePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
+  const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
 
   onMount(() => {
     console.log('PlayerSelection component mounted')
@@ -20,6 +21,7 @@ const PlayerSelection: Component = () => {
   const aiModels = [AIModel.GPT_4, AIModel.GPT_3_5, AIModel.CLAUDE, AIModel.GEMINI]
 
   const startGame = async () => {
+    setErrorMessage(null)
     try {
       // Get a game ID from the server
       const gameId = await initializeGame(gameMode())
@@ -31,7 +33,7 @@ const PlayerSelection: Component = () => {
       window.navigate(`/connect4/game/${gameId}`)
     } catch (error) {
       console.error('Failed to start game:', error)
-      alert('Failed to start the game. Please try again.')
+      setErrorMessage(`Failed to start the game: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -88,6 +90,13 @@ const PlayerSelection: Component = () => {
         <button class={styles.startButton} onClick={startGame}>
           Start Game
         </button>
+
+        {/* Error message display */}
+        <Show when={errorMessage() !== null}>
+          <div class={styles.errorMessage}>
+            <p>{errorMessage()}</p>
+          </div>
+        </Show>
       </div>
     </div>
   )

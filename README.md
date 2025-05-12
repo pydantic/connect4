@@ -2,16 +2,21 @@
 
 Demo of what PydanticAI and Logfire can do!
 
-## Backend
+## Dev
 
-Run `make install`, then `uv run connect4/server.py`, then go to `http://127.0.0.1:8000/docs#/` to manually make
-requests to the dev server.
-
-## Frontend
-
-run
+In development, run the frontend with
 
 ```bash
-npm i
 npm run dev
 ```
+
+And the backend with
+
+```bash
+make backend-dev
+```
+
+## Production
+
+The FastAPI app is setup to serve the frontend, we'll need a docker container to build the frontend
+and and copy it into place to for the fastapi app to serve.

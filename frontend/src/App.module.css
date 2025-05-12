@@ -81,9 +81,12 @@ h1 {
 
 .controls {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin: 0 auto 1rem auto;
   max-width: 500px;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .columnButton {
@@ -96,6 +99,7 @@ h1 {
   cursor: pointer;
   font-size: 1.2rem;
   transition: background-color 0.2s;
+  width: calc(100% / 7 - 2%);
 }
 
 .columnButton:hover:not(:disabled) {
@@ -185,6 +189,20 @@ h1 {
   background-color: #e2e8f0;
   color: #4a5568;
   border-left: 4px solid #718096;
+}
+
+.errorMessage {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-left: 4px solid #ef4444;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
 }
 
 /* Media query for smaller screens */

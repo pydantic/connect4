@@ -24,10 +24,12 @@ const GameBoard: Component<GameBoardProps> = (props) => {
   const [winner, setWinner] = createSignal<PlayerColor | null>(null)
   const [isDraw, setIsDraw] = createSignal<boolean>(false)
   const [isLoading, setIsLoading] = createSignal<boolean>(true)
+  const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
 
   // Load game state from server
   const loadGameState = async () => {
     setIsLoading(true)
+    setErrorMessage(null) // Clear any previous errors
     try {
       console.log('Loading game state for gameId:', gameIdState())
       const gameState = await getGameState(gameIdState())
@@ -35,7 +37,7 @@ const GameBoard: Component<GameBoardProps> = (props) => {
       applyGameState(gameState)
     } catch (error) {
       console.error('Error loading game state:', error)
-      alert('Error loading game state')
+      setErrorMessage(`Failed to load game state: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -110,7 +112,35 @@ const GameBoard: Component<GameBoardProps> = (props) => {
   const placeToken = async (columnIndex: number) => {
     if (isAIThinking() || winner() !== null || isDraw()) return false // Don't allow moves after game end
 
-    setIsAIThinking(true) // Show loading state while making the move
+    // Check if the column is full
+    if (!isColumnAvailable(board(), columnIndex)) {
+      setErrorMessage("This column is full. Please choose another one.")
+      return false
+    }
+
+    // Immediately update the board with the user's move
+    const newBoard = board().map(row => [...row]) // Clone the board
+
+    // Find the lowest empty cell in the selected column
+    let placed = false
+    for (let rowIndex = ROWS - 1; rowIndex >= 0; rowIndex--) {
+      if (newBoard[rowIndex][columnIndex] === null) {
+        // Place the token
+        newBoard[rowIndex][columnIndex] = currentPlayer()
+        placed = true
+        // Update the board state immediately
+        setBoard(newBoard)
+        break
+      }
+    }
+
+    if (!placed) {
+      console.error("Couldn't place token - column is full")
+      return false
+    }
+
+    setIsAIThinking(true) // Show loading state while making the API move
+    setErrorMessage(null) // Clear any previous errors
 
     try {
       console.log(`Making move in column ${columnIndex} for game ${gameIdState()}`)
@@ -118,13 +148,16 @@ const GameBoard: Component<GameBoardProps> = (props) => {
       const gameState = await makeMove(gameIdState(), columnIndex)
       console.log('Received updated game state after move:', gameState)
 
-      // Apply the updated game state
+      // Apply the server-returned game state (overwrites our local changes)
       applyGameState(gameState)
 
       return true // Move was successful
     } catch (error) {
       console.error('Error making move:', error)
-      alert('Error making move')
+      setErrorMessage(`Failed to make move: ${error instanceof Error ? error.message : 'Unknown error'}`)
+
+      // If the API call failed, we need to revert our local change
+      loadGameState()
       return false
     } finally {
       setIsAIThinking(false)
@@ -271,6 +304,13 @@ const GameBoard: Component<GameBoardProps> = (props) => {
           Refresh Game
         </button>
       </div>
+
+      {/* Error message display */}
+      <Show when={errorMessage() !== null}>
+        <div class={styles.errorMessage}>
+          <p>{errorMessage()}</p>
+        </div>
+      </Show>
     </div>
   )
 }

@@ -70,12 +70,10 @@ interface AIResponse {
  */
 export async function makeMove(gameId: string, columnIndex: number): Promise<GameStateResponse> {
   // Convert column index (0-6) to column number (1-7)
-  const columnNumber = columnIndex + 1
+  let url = `/api/games/${gameId}/move?column=${columnIndex + 1}`
 
   // Make the API request
-  const response = await fetch(`/api/games/${gameId}/move?column=${columnNumber}`, {
-    method: 'POST',
-  })
+  const response = await fetch(url, { method: 'POST' })
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`)
