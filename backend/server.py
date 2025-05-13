@@ -16,6 +16,7 @@ logfire.configure(send_to_logfire='if-token-present')
 
 app = fastapi.FastAPI()
 logfire.instrument_fastapi(app)
+logfire.instrument_pydantic_ai()
 
 app.include_router(api_router, prefix='/api')
 
