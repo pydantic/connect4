@@ -54,16 +54,16 @@ const PlayerSelection: Component = () => {
 
         <div class={styles.modeSelection}>
           <h3>Choose Game Mode</h3>
-          <div class={styles.modeButtons}>
+          <div class={styles.tabs}>
             <button
-              class={gameMode() === GameMode.HUMAN_VS_AI ? styles.selectedMode : ''}
+              class={gameMode() === GameMode.HUMAN_VS_AI ? styles.activeTab : styles.tab}
               onClick={() => setGameMode(GameMode.HUMAN_VS_AI)}
               disabled={isStartingGame()}
             >
               Human vs AI
             </button>
             <button
-              class={gameMode() === GameMode.AI_VS_AI ? styles.selectedMode : ''}
+              class={gameMode() === GameMode.AI_VS_AI ? styles.activeTab : styles.tab}
               onClick={() => setGameMode(GameMode.AI_VS_AI)}
               disabled={isStartingGame()}
             >
