@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: connect4
+    runtime: docker
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LOGFIRE_TOKEN
+        sync: false
