@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from textwrap import dedent
-from typing import Literal
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 
-from backend.game import GameState, Player
+from backend.game import FIRST_PLAYER, Column, GameState, Player
 
 
 @dataclass
@@ -12,46 +11,31 @@ class Connect4Deps:
     game_state: GameState
 
 
-type GameColumn = Literal[0, 1, 2, 3, 4, 5, 6]
-
-
-@dataclass
-class Move:
-    """The move you want to make."""
-
-    column: GameColumn
-
-
-connect4_agent = Agent(
-    # 'anthropic:claude-3-7-sonnet-latest',
-    # 'openai:gpt-4o',
+connect4_agent = Agent[Connect4Deps, Column](
     deps_type=Connect4Deps,
     retries=7,  # can try all columns lol
-    output_type=ToolOutput(type_=Move, name='move'),
+    output_type=ToolOutput(type_=Column, name='move'),  # pyright: ignore[reportArgumentType]
 )
 
 
 @connect4_agent.output_validator
-def validate_move(ctx: RunContext[Connect4Deps], move: Move) -> Move:
+def validate_move(ctx: RunContext[Connect4Deps], column: Column) -> Column:
     """Validate the move made by the agent."""
-    column = move.column
     try:
-        ctx.deps.game_state.board.validate_move(column)
+        ctx.deps.game_state.validate_move(column)
     except Exception as e:
         raise ModelRetry(str(e)) from e
-    return move
+    return column
 
 
 @connect4_agent.instructions
 def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
-    current_player = ctx.deps.game_state.current_player
-    player_name = current_player.value
-    opponent_name = current_player.opponent.value
-    goes_first = Player.first_player().value
+    player_name = ctx.deps.game_state.get_next_player()
+    opponent_name: Player = 'X' if player_name == 'O' else 'O'
     strategy_header = dedent(
         f"""\
         You are an expert Connect 4 strategist playing as **{player_name}** 
-        (opponent is **{opponent_name}**; {goes_first} is the first player).
+        (opponent is **{opponent_name}**; {FIRST_PLAYER} is the first player).
 
         Apply these principles to choose the optimal move for the next turn:
         • Control the center columns to maximize future connections. 
@@ -61,11 +45,12 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
           (first player prefers odd‑row wins, second player even‑row wins). 
         • Never play a move that lets the opponent win on their next turn. 
 
-        Analyze the board and use the `final_result` tool to respond with the column number (0‑6) of your best move.
+        Analyze the board and use the `move` tool to respond with the column number (1‑7) of your best move.
+        If you are a thinking model, don't think for too long — we want to play fast!
         
         Board state:
         """
     )
 
-    board_state = ctx.deps.game_state.board.render()
+    board_state = ctx.deps.game_state.render_board()
     return strategy_header + board_state
