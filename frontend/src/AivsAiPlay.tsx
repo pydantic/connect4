@@ -13,7 +13,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
   const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:ai-vs-ai|game)\/([^\/]+)/)
   const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
   console.log('AivsAiPlay found gameId:', gameId, 'from path:', window.location.pathname)
-  
+
   // Game state
   const [gameIdState] = createSignal<string>(gameId)
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
@@ -32,13 +32,13 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       console.log('Loading game state for gameId:', gameIdState())
       const gameState = await getGameState(gameIdState())
       console.log('Received game state:', gameState)
-      
+
       if (gameState.mode !== 'ai-vs-ai') {
         // Wrong game mode - this shouldn't happen but let's handle it
         console.error('Error: Game mode is not ai-vs-ai:', gameState.mode)
         setErrorMessage(`Wrong game mode: ${gameState.mode}. Expected: ai-vs-ai`)
       }
-      
+
       // Apply the state
       applyGameState(gameState)
 
@@ -72,7 +72,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     for (const move of gameState.moves) {
       // Convert column number (1-7) to index (0-6)
       const columnIndex = move.column - 1
-      
+
       // Convert player string to enum
       const playerColor = move.player === 'red' ? PlayerColor.RED : PlayerColor.BLUE
 
@@ -122,11 +122,11 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       if (currentState.moves.length > lastMoveCount() && lastMoveCount() > 0) {
         // We already have a new move from the server but haven't displayed it yet
         // Just apply the state to display it
-        console.log("Displaying existing move from server")
+        console.log('Displaying existing move from server')
         applyGameState(currentState)
       } else if (currentState.status === 'playing') {
         // Make a new move - the AI API handles determining the correct column
-        console.log("Making new AI move")
+        console.log('Making new AI move')
         const newState = await makeMove(gameIdState(), 0)
         applyGameState(newState)
       }

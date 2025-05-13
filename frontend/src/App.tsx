@@ -5,9 +5,11 @@ import SimpleRoute from './SimpleRoute'
 const App: Component = () => {
   console.log('App component rendering')
 
-  return <div class={styles.App}>
-    <SimpleRoute />
-  </div>
+  return (
+    <div class={styles.App}>
+      <SimpleRoute />
+    </div>
+  )
 }
 
 export default App

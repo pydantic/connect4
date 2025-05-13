@@ -13,7 +13,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
   const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:human-vs-ai|game)\/([^\/]+)/)
   const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
   console.log('HumanAIPlay found gameId:', gameId, 'from path:', window.location.pathname)
-  
+
   // Game state
   const [gameIdState] = createSignal<string>(gameId)
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
@@ -31,13 +31,13 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       console.log('Loading game state for gameId:', gameIdState())
       const gameState = await getGameState(gameIdState())
       console.log('Received game state:', gameState)
-      
+
       if (gameState.mode !== 'human-vs-ai') {
         // Wrong game mode - this shouldn't happen but let's handle it
         console.error('Error: Game mode is not human-vs-ai:', gameState.mode)
         setErrorMessage(`Wrong game mode: ${gameState.mode}. Expected: human-vs-ai`)
       }
-      
+
       applyGameState(gameState)
     } catch (error) {
       console.error('Error loading game state:', error)
@@ -59,7 +59,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     for (const move of gameState.moves) {
       // Convert column number (1-7) to index (0-6)
       const columnIndex = move.column - 1
-      
+
       // Convert player string to enum
       const playerColor = move.player === 'red' ? PlayerColor.RED : PlayerColor.BLUE
 
@@ -131,7 +131,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       // Call the API to make the move and get updated game state (including AI's response move)
       const gameState = await makeMove(gameIdState(), columnIndex)
       console.log('Received updated game state after move:', gameState)
-      
+
       // Apply the server-returned game state (overwrites our local changes)
       applyGameState(gameState)
 
@@ -245,10 +245,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
         <div class={styles.loadingMessage}>Loading game...</div>
       </Show>
 
-      <GameBoardControls 
-        onColumnClick={placeToken} 
-        isValidMove={isValidMove} 
-      />
+      <GameBoardControls onColumnClick={placeToken} isValidMove={isValidMove} />
 
       <GameBoard board={board()} />
 

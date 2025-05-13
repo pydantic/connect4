@@ -24,12 +24,12 @@ const PlayerSelection: Component = () => {
   const startGame = async () => {
     setErrorMessage(null)
     setIsStartingGame(true)
-    
+
     try {
       // Get the backend mode string format
       const backendModeParam = gameMode() === GameMode.HUMAN_VS_AI ? 'human-vs-ai' : 'ai-vs-ai'
       console.log(`Starting game with mode: ${backendModeParam}`)
-      
+
       // Get a game ID from the server
       const gameId = await initializeGame(gameMode())
       console.log('Got game ID from server:', gameId)
@@ -76,8 +76,8 @@ const PlayerSelection: Component = () => {
           <Show when={gameMode() === GameMode.AI_VS_AI}>
             <div class={styles.playerConfig}>
               <h3>Red Player (AI)</h3>
-              <select 
-                value={redPlayerModel()} 
+              <select
+                value={redPlayerModel()}
                 onChange={(e) => setRedPlayerModel(e.target.value as AIModel)}
                 disabled={isStartingGame()}
               >
@@ -95,8 +95,8 @@ const PlayerSelection: Component = () => {
 
           <div class={styles.playerConfig}>
             <h3>Blue Player (AI)</h3>
-            <select 
-              value={bluePlayerModel()} 
+            <select
+              value={bluePlayerModel()}
               onChange={(e) => setBluePlayerModel(e.target.value as AIModel)}
               disabled={isStartingGame()}
             >
@@ -105,11 +105,7 @@ const PlayerSelection: Component = () => {
           </div>
         </div>
 
-        <button 
-          class={styles.startButton} 
-          onClick={startGame}
-          disabled={isStartingGame()}
-        >
+        <button class={styles.startButton} onClick={startGame} disabled={isStartingGame()}>
           {isStartingGame() ? 'Starting Game...' : 'Start Game'}
         </button>
 
