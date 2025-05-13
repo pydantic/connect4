@@ -36,9 +36,9 @@ const PlayerSelectionDirectFallback: Component = () => {
           <button
             style={{
               padding: '0.75rem 1.5rem',
-              border: '2px solid #2a9d4e',
-              'background-color': '#2a9d4e',
-              color: 'white',
+              border: '2px solid #9BFCDA',
+              'background-color': '#9BFCDA',
+              color: '#1A0312',
               'border-radius': '8px',
               'font-size': '1rem',
               'font-weight': 'bold',
@@ -51,9 +51,8 @@ const PlayerSelectionDirectFallback: Component = () => {
           <button
             style={{
               padding: '0.75rem 1.5rem',
-              border: '2px solid #2a9d4e',
-              'background-color': '#ffffff',
-              color: '#2a9d4e',
+              border: '2px solid #9BFCDA',
+              color: '#9BFCDA',
               'border-radius': '8px',
               'font-size': '1rem',
               'font-weight': 'bold',

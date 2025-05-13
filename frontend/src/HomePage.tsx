@@ -9,16 +9,16 @@ const HomePage: Component = () => {
 
   return (
     <div class={styles.homeContainer}>
-      <h1>Connect Four</h1>
+      <h1>Connect 4</h1>
       <div class={styles.buttonContainer}>
         <a href="/connect4" onClick={() => navigateTo('/connect4')} class={styles.button}>
-          Play Connect Four
+          Play the game - Connect 4
         </a>
         <a href="https://example.com" target="_blank" rel="noopener noreferrer" class={styles.button}>
-          See Connect Four Traces
+          See game traces in Logfire
         </a>
         <a href="#" class={styles.button} onClick={(e) => e.preventDefault()}>
-          Join Prize Draw
+          Join the Prize Draw
         </a>
       </div>
     </div>

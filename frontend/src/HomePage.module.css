@@ -20,8 +20,8 @@
 .button {
   display: block;
   padding: 1.5rem 2rem;
-  background-color: #2a9d4e;
-  color: white;
+  background-color: #9BFCDA;
+  color: #1A0312;
   text-decoration: none;
   border-radius: 10px;
   font-size: 1.2rem;
@@ -32,7 +32,7 @@
 }
 
 .button:hover {
-  background-color: #238a42;
+  background-color: #45BC8F;
   transform: translateY(-3px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }

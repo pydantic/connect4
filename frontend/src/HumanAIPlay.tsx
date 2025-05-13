@@ -237,20 +237,20 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     <div class={styles.gameContainer}>
       <h1>Connect Four</h1>
 
+      <div class={`${styles.status} ${getStatusClass()}`}>
+        <p>{renderGameStatus()}</p>
+      </div>
+
       <Show when={isLoading()}>
         <div class={styles.loadingMessage}>Loading game...</div>
       </Show>
-
-      <GameBoard board={board()} />
 
       <GameBoardControls 
         onColumnClick={placeToken} 
         isValidMove={isValidMove} 
       />
 
-      <div class={`${styles.status} ${getStatusClass()}`}>
-        <p>{renderGameStatus()}</p>
-      </div>
+      <GameBoard board={board()} />
 
       <div class={styles.gameControls}>
         <a

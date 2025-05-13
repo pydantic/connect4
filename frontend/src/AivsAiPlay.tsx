@@ -203,7 +203,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
 
   return (
     <div class={styles.gameContainer}>
-      <h1>Connect Four</h1>
+      <h1>Connect 4</h1>
 
       <Show when={isLoading()}>
         <div class={styles.loadingMessage}>Loading game...</div>

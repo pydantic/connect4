@@ -55,7 +55,7 @@ export const GameBoardControls: Component<{
             onClick={() => props.onColumnClick(colIndex)}
             disabled={!props.isValidMove(colIndex)}
           >
-            ↓
+            👇
           </button>
         ))}
     </div>

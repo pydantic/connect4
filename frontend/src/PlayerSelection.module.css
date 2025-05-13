@@ -1,3 +1,7 @@
+body {
+  background-color: #1A0312;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -9,12 +13,12 @@
 }
 
 h1 {
-  color: #333;
+  color: #fff;
   margin-bottom: 2rem;
 }
 
 .selectionCard {
-  background-color: #ffffff;
+  background-color: #321A2C;
   border-radius: 10px;
   padding: 2rem;
   width: 100%;
@@ -23,31 +27,32 @@ h1 {
 
 h2 {
   margin-top: 0;
-  color: #333;
+  color: #fff;
   text-align: center;
   margin-bottom: 1.5rem;
 }
 
 h3 {
-  color: #555;
+  color: #fff;
   margin-bottom: 0.75rem;
 }
 
-.modeSelection {
+.modeSelection {  
   margin-bottom: 2rem;
 }
 
 .modeButtons {
-  display: flex;
-  gap: 1rem;
+  display: flex;  
+  gap: 1.5rem;
   justify-content: center;
 }
 
 .modeButtons button {
   padding: 0.75rem 1.5rem;
-  border: 2px solid #2a9d4e;
-  background-color: #ffffff;
-  color: #2a9d4e;
+  width: 100%;
+  border: 2px solid #9BFCDA;
+  background-color: #321A2C;
+  color: #9BFCDA;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: bold;
@@ -56,12 +61,12 @@ h3 {
 }
 
 .modeButtons button:hover {
-  background-color: #e8f5ee;
+  background-color: #1A0312;
 }
 
 .modeButtons button.selectedMode {
-  background-color: #2a9d4e;
-  color: white;
+  background-color: #9BFCDA;
+  color: #321A2C;
 }
 
 .playerSelection {
@@ -74,7 +79,7 @@ h3 {
 .playerConfig {
   padding: 1rem;
   border-radius: 8px;
-  background-color: #f8f8f8;
+  background-color: #46363F;
 }
 
 .playerConfig h3 {
@@ -84,7 +89,7 @@ h3 {
 
 .playerConfig p {
   margin: 0;
-  color: #666;
+  color: #fff;
 }
 
 select {
@@ -100,8 +105,8 @@ select {
   display: block;
   width: 100%;
   padding: 1rem;
-  background-color: #2a9d4e;
-  color: white;
+  background-color: #9BFCDA;
+  color: #321A2C;
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
@@ -111,7 +116,7 @@ select {
 }
 
 .startButton:hover {
-  background-color: #238a42;
+  background-color: #9BFCDA;
 }
 
 .errorMessage {
