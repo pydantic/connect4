@@ -19,6 +19,10 @@ h1 {
   text-align: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 .board {
   display: flex;
   flex-direction: column;
