@@ -10,7 +10,7 @@ dependencies = [
     "pydantic-ai>=0.2.3",
     "logfire[fastapi] >= 3.15.1",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 authors = [
     { name = "Samuel Colvin", email = "samuel@pydantic.dev" },
     { name = "David Montague", email = "david@pydantic.dev" },
