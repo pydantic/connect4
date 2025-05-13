@@ -2,3 +2,5 @@ node_modules
 dist
 **/.claude/settings.local.json
 __pycache__
+
+.env

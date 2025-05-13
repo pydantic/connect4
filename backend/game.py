@@ -7,17 +7,22 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class Player(StrEnum):
-    red = 'red'
-    yellow = 'yellow'
+    x = 'X'
+    o = 'O'
 
-    def short_value(self):
-        return 'X' if self == Player.red else 'O'
+    @staticmethod
+    def first_player() -> Player:
+        return Player.x
+
+    @property
+    def opponent(self) -> Player:
+        return Player.x if self == Player.o else Player.o
 
 
 class GameStatus(StrEnum):
     in_progress = 'in_progress'
-    red_won = 'red_won'
-    yellow_won = 'yellow_won'
+    x_won = 'x_won'
+    o_won = 'o_won'
     draw = 'draw'
 
 
@@ -31,7 +36,7 @@ class Board(BaseModel):
     The pieces of the board.
     
     This is a list of columns, where the first item in each column represents the bottom row, the second is the row
-    above that, etc. 
+    above that, etc.
     """
 
     @model_validator(mode='after')
@@ -39,6 +44,13 @@ class Board(BaseModel):
         if len(self.grid) != self.n_columns:
             raise ValueError(f'Expected {self.n_columns} columns in the grid, got {len(self.grid)}')
         return self
+
+    def validate_move(self, column: int) -> None:
+        if not 0 <= column < len(self.grid):
+            raise ValueError(f'Invalid column: must be between 0 and {self.n_columns - 1}')
+        grid_column = self.grid[column]
+        if len(grid_column) >= self.n_rows:
+            raise ValueError(f'Column {column} is full')
 
     def handle_move(self, player: Player, column: int) -> tuple[int, GameStatus]:
         """Handle a move by a player.
@@ -49,22 +61,29 @@ class Board(BaseModel):
         if self._check_win(player, row, column):
             return (
                 row,
-                GameStatus.red_won if player == Player.red else GameStatus.yellow_won,
+                GameStatus.x_won if player == Player.x else GameStatus.o_won,
             )
         elif self._is_full():
             return row, GameStatus.draw
         return row, GameStatus.in_progress
 
-    def render_grid(self) -> str:
-        """Render the grid as a string."""
-        grid_str = ''
-        for row in range(self.n_rows - 1, -1, -1):
-            grid_str += '|'
-            for column in range(self.n_columns):
-                piece = self._piece_at_location(row, column)
-                grid_str += f' {piece.short_value() if piece else " "} |'
-            grid_str += '\n'
-        return grid_str
+    def render(self) -> str:
+        # -------- header line with column indices -------------------------
+        header = 'Columns:\n' + ' '.join(str(idx) for idx in range(self.n_columns))
+
+        # -------- grid rows, top (row 5) to bottom (row 0) ---------------
+        rows: list[str] = []
+        for row in range(self.n_rows - 1, -1, -1):  # 5 → 0
+            cells: list[str] = []
+            for col in range(self.n_columns):  # 0 … 6
+                piece = self._piece_at_location(row, col)
+                if piece is None:
+                    cells.append('.')
+                else:
+                    cells.append(piece.value)
+            rows.append(' '.join(cells))
+
+        return header + '\n' + '\n'.join(rows)
 
     def _is_full(self) -> bool:
         """Check if the board is full."""
@@ -75,11 +94,8 @@ class Board(BaseModel):
 
         Returns the row index where the piece was placed.
         """
-        if not 0 <= column < len(self.grid):
-            raise ValueError(f'Invalid column: must be between 0 and {self.n_columns - 1}')
+        self.validate_move(column)
         grid_column = self.grid[column]
-        if len(grid_column) >= self.n_rows:
-            raise ValueError(f'Column {column} is full')
         grid_column.append(player)
         return len(grid_column) - 1
 
@@ -109,7 +125,6 @@ class Board(BaseModel):
                         break
 
             if count >= 4:
-                print(count, direction_pair, last_move_row, last_move_column)
                 return True
 
         return False
@@ -128,9 +143,17 @@ class GameState(BaseModel):
     """Represents the current state of the Connect4 game."""
 
     board: Board = Field(default_factory=Board)
-    current_player: Player = Field(default=Player.red)
+    current_player: Player = Field(default=Player.first_player())
     status: GameStatus = Field(default=GameStatus.in_progress)
     last_move: tuple[int, int] | None = Field(default=None)
+
+    def render(self) -> str:
+        """Render the current game state as a string."""
+        board = self.board.render()
+        if self.status != GameStatus.in_progress:
+            return f'{board}\n\nGame status: {self.status.value}'
+        else:
+            return f'{board}\n\nCurrent player: {self.current_player.value}'
 
     def handle_move(self, column: int) -> GameState:
         """Handle a move by the current player.
@@ -138,7 +161,7 @@ class GameState(BaseModel):
         This method updates the game state and checks for a win or draw.
         """
         row, status = self.board.handle_move(self.current_player, column)
-        self.current_player = Player.yellow if self.current_player == Player.red else Player.red
+        self.current_player = Player.o if self.current_player == Player.x else Player.x
         self.last_move = (row, column)
         self.status = status
         return self

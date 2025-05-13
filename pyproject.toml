@@ -1,5 +1,5 @@
 [project]
-name = "connect4"
+name = "backend"
 version = "0.1.0"
 description = "Connect4 Game"
 readme = "README.md"
@@ -7,6 +7,7 @@ dependencies = [
     "uvicorn >= 0.34.2",
     "fastapi >= 0.115.12",
     "pydantic >= 2.11.4",
+    "pydantic-ai>=0.2.3",
     "logfire[fastapi] >= 3.15.1",
 ]
 requires-python = ">=3.11"
@@ -23,7 +24,7 @@ dev = ["ruff >= 0.8.3", "pyright >= 1.1.397"]
 typeCheckingMode = "strict"
 reportUnnecessaryTypeIgnoreComment = true
 reportMissingTypeStubs = false
-include = ["connect4"]
+include = ["backend"]
 venvPath = "."
 venv = ".venv"
 
@@ -42,7 +43,7 @@ extend-select = [
     "FA",     # https://docs.astral.sh/ruff/rules/#flake8-future-annotations-fa
 ]
 flake8-quotes = { inline-quotes = "single", multiline-quotes = "double" }
-isort = { combine-as-imports = true, known-first-party = ["connect4"] }
+isort = { combine-as-imports = true, known-first-party = ["backend"] }
 mccabe = { max-complexity = 14 }
 ignore = [
     "D107", # ignore missing docstring in __init__ methods

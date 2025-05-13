@@ -1,79 +1,71 @@
-import asyncio
 from dataclasses import dataclass
+from textwrap import dedent
 from typing import Literal
 
-from pydantic_ai import Agent
+from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
+
+from backend.game import GameState, Player
 
 
 @dataclass
-class Turn:
-    col: Literal['a', 'b', 'c', 'd', 'e', 'f', 'g']
-    row: Literal[1, 2, 3, 4, 5, 6]
+class Connect4Deps:
+    game_state: GameState
+
+
+type GameColumn = Literal[0, 1, 2, 3, 4, 5, 6]
 
 
 @dataclass
-class PlayerTurn(Turn):
-    player: Literal['blue', 'red']
+class Move:
+    """The move you want to make."""
 
-    def __str__(self) -> str:
-        return f'{self.player} {self.col.upper()}{self.row}'
-
-
-def ascii_grid(turns: list[PlayerTurn]) -> str:
-    # Initialize empty grid, by x (col), y (row)
-    grid: list[list[Literal[' ', 'B', 'R']]] = [[' ' for _ in range(7)] for _ in range(6)]
-
-    for turn in turns:
-        grid[6 - turn.row][ord(turn.col) - ord('a')] = 'B' if turn.player == 'blue' else 'R'
-
-    # Convert grid to string
-    grid_str = '\n'.join(f'{6 - index} {" ".join(row)}' for index, row in enumerate(grid))
-    grid_str += '\n  A B C D E F G'
-
-    return grid_str
+    column: GameColumn
 
 
-player_agent = Agent(
-    'anthropic:claude-3-7-sonnet-latest',
-    system_prompt="""
-    Your job is to play the game "Connect Four", by saying which move you want to play next in response
-    to the current state of the game.
-
-    Each disc must be placed in a column, and can only be placed in the lowest available row in that column.
-
-    A player wins when they achieve 4 coins in a row, column, or diagonal. You should try to win by achieving
-    4 coins in a row, but also try to block your opponent from winning.
-
-    You play as the Blue team.
-
-    The grid is six slots high and seven slots wide.
-
-    The holes in the grid are referenced by letter for the column (A-G, left to right)
-    and number for the row (1-6, bottom to top).
-
-    So the bottom left hole is A1, the bottom right hole is G1, the top left hole is A6, and the top right hole is G6.
-
-    Reply with just the letter and number for the hole you want to play in, nothing else.
-    """,
-    output_type=Turn,
+connect4_agent = Agent(
+    # 'anthropic:claude-3-7-sonnet-latest',
+    # 'openai:gpt-4o',
+    deps_type=Connect4Deps,
+    retries=7,  # can try all columns lol
+    output_type=ToolOutput(type_=Move, name='move'),
 )
 
-extract_agent = Agent('anthropic:claude-3-5-haiku-latest', output_type=Turn)
+
+@connect4_agent.output_validator
+def validate_move(ctx: RunContext[Connect4Deps], move: Move) -> Move:
+    """Validate the move made by the agent."""
+    column = move.column
+    try:
+        ctx.deps.game_state.board.validate_move(column)
+    except Exception as e:
+        raise ModelRetry(str(e)) from e
+    return move
 
 
-async def play():
-    turns: list[PlayerTurn] = []
-    print(f'Empty board:\n{ascii_grid(turns)}')
-    while True:
-        r = await extract_agent.run(input('Red: What move do you want to play next? '))
-        turn = PlayerTurn(col=r.output.col, row=r.output.row, player='red')
-        turns.append(turn)
-        print(f'turn {turn}, state:\n{ascii_grid(turns)}')
-        r = await player_agent.run(f"""turns: {' '.join(map(str, turns))}""")
-        turn = PlayerTurn(col=r.output.col, row=r.output.row, player='blue')
-        turns.append(turn)
-        print(f'turn {turn}, state:\n{ascii_grid(turns)}')
+@connect4_agent.instructions
+def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
+    current_player = ctx.deps.game_state.current_player
+    player_name = current_player.value
+    opponent_name = current_player.opponent.value
+    goes_first = Player.first_player().value
+    strategy_header = dedent(
+        f"""\
+        You are an expert Connect 4 strategist playing as **{player_name}** 
+        (opponent is **{opponent_name}**; {goes_first} is the first player).
 
+        Apply these principles to choose the optimal move for the next turn:
+        • Control the center columns to maximize future connections. 
+        • Take any immediate win, or block the opponent's immediate win.
+        • Set up double‑threat "forks" (two winning lines at once) whenever possible. 
+        • Plan vertical, horizontal, and diagonal wins; track odd/even‑row parity 
+          (first player prefers odd‑row wins, second player even‑row wins). 
+        • Never play a move that lets the opponent win on their next turn. 
 
-if __name__ == '__main__':
-    asyncio.run(play())
+        Analyze the board and use the `final_result` tool to respond with the column number (0‑6) of your best move.
+        
+        Board state:
+        """
+    )
+
+    board_state = ctx.deps.game_state.board.render()
+    return strategy_header + board_state
