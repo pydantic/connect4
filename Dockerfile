@@ -11,9 +11,6 @@ COPY frontend/package.json ./frontend/
 # Install frontend dependencies
 RUN npm install
 
-# Need the following to build for arm64...
-RUN npm install --no-save @rollup/rollup-linux-arm64-gnu
-
 # Copy frontend source code
 COPY frontend ./frontend/
 
