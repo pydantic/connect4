@@ -20,8 +20,8 @@ export enum PlayerType {
 
 // Player colors
 export enum PlayerColor {
-  RED = 1,
-  BLUE = 2,
+  PINK = 1,
+  ORANGE = 2,
 }
 
 // Player configuration
@@ -34,8 +34,8 @@ export interface PlayerConfig {
 // Game configuration
 export interface GameConfig {
   mode: GameMode
-  redPlayer: PlayerConfig
-  bluePlayer: PlayerConfig
+  pinkPlayer: PlayerConfig
+  orangePlayer: PlayerConfig
 }
 
 // Board and game state types

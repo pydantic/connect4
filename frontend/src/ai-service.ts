@@ -28,7 +28,7 @@ export async function initializeGame(mode: GameMode): Promise<string> {
 }
 
 interface Move {
-  player: 'red' | 'blue'
+  player: 'pink' | 'orange'
   column: number // 1-7 representing columns
 }
 
@@ -36,7 +36,7 @@ interface Move {
 export interface GameState {
   moves: Move[]
   mode: 'human-vs-ai' | 'ai-vs-ai'
-  status: 'playing' | 'red-win' | 'blue-win' | 'draw'
+  status: 'playing' | 'pink-win' | 'orange-win' | 'draw'
 }
 
 /**

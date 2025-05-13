@@ -9,8 +9,8 @@ console.log('PlayerSelection module loaded')
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
   const [gameMode, setGameMode] = createSignal<GameMode>(GameMode.HUMAN_VS_AI)
-  const [redPlayerModel, setRedPlayerModel] = createSignal<AIModel>(AIModel.CLAUDE)
-  const [bluePlayerModel, setBluePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
+  const [pinkPlayerModel, setPinkPlayerModel] = createSignal<AIModel>(AIModel.CLAUDE)
+  const [orangePlayerModel, setOrangePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
 
@@ -75,10 +75,10 @@ const PlayerSelection: Component = () => {
         <div class={styles.playerSelection}>
           <Show when={gameMode() === GameMode.AI_VS_AI}>
             <div class={styles.playerConfig}>
-              <h3>Red Player (AI)</h3>
+              <h3>Pink Player (AI)</h3>
               <select
-                value={redPlayerModel()}
-                onChange={(e) => setRedPlayerModel(e.target.value as AIModel)}
+                value={pinkPlayerModel()}
+                onChange={(e) => setPinkPlayerModel(e.target.value as AIModel)}
                 disabled={isStartingGame()}
               >
                 <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>
@@ -88,16 +88,16 @@ const PlayerSelection: Component = () => {
 
           <Show when={gameMode() === GameMode.HUMAN_VS_AI}>
             <div class={styles.playerConfig}>
-              <h3>Red Player (You)</h3>
+              <h3>Pink Player (You)</h3>
               <p>Human Player</p>
             </div>
           </Show>
 
           <div class={styles.playerConfig}>
-            <h3>Blue Player (AI)</h3>
+            <h3>Orange Player (AI)</h3>
             <select
-              value={bluePlayerModel()}
-              onChange={(e) => setBluePlayerModel(e.target.value as AIModel)}
+              value={orangePlayerModel()}
+              onChange={(e) => setOrangePlayerModel(e.target.value as AIModel)}
               disabled={isStartingGame()}
             >
               <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>

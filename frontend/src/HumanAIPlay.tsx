@@ -17,11 +17,11 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
   // Game state
   const [gameIdState] = createSignal<string>(gameId)
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
-  const [currentPlayer, setCurrentPlayer] = createSignal<PlayerColor>(PlayerColor.RED)
+  const [currentPlayer, setCurrentPlayer] = createSignal<PlayerColor>(PlayerColor.PINK)
   const [isAIThinking, setIsAIThinking] = createSignal<boolean>(false)
   const [isLoading, setIsLoading] = createSignal<boolean>(true)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
-  const [gameStatus, setGameStatus] = createSignal<'playing' | 'red-win' | 'blue-win' | 'draw'>('playing')
+  const [gameStatus, setGameStatus] = createSignal<'playing' | 'pink-win' | 'orange-win' | 'draw'>('playing')
 
   // Load game state from server
   const loadGameState = async () => {
@@ -50,10 +50,10 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
   // Apply game state from server response
   const applyGameState = (gameState: GameState) => {
     const newBoard = createEmptyBoard()
-    let lastPlayer = PlayerColor.BLUE // Start with BLUE so first move will be RED
+    let lastPlayer = PlayerColor.ORANGE // Start with ORANGE so first move will be PINK
 
     // Update the game status
-    setGameStatus(gameState.status)
+    setGameStatus(gameState.status as 'playing' | 'pink-win' | 'orange-win' | 'draw')
 
     // Apply moves in order
     for (const move of gameState.moves) {
@@ -61,7 +61,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       const columnIndex = move.column - 1
 
       // Convert player string to enum
-      const playerColor = move.player === 'red' ? PlayerColor.RED : PlayerColor.BLUE
+      const playerColor = move.player === 'pink' ? PlayerColor.PINK : PlayerColor.ORANGE
 
       // Find the lowest empty cell in the selected column
       let placed = false
@@ -83,7 +83,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     setBoard(newBoard)
 
     // Set the current player to the opposite of the last player
-    const nextPlayer = lastPlayer === PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED
+    const nextPlayer = lastPlayer === PlayerColor.PINK ? PlayerColor.ORANGE : PlayerColor.PINK
     setCurrentPlayer(nextPlayer)
   }
 
@@ -166,25 +166,25 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     // Check the game status from the server
     const status = gameStatus()
 
-    if (status === 'red-win') {
+    if (status === 'pink-win') {
       const config = props.gameConfig
-      const winnerConfig = config.redPlayer
+      const winnerConfig = config.pinkPlayer
 
       if (winnerConfig.type === PlayerType.HUMAN) {
-        return 'Red (You) wins!'
+        return 'Pink (You) wins!'
       } else {
-        return `Red (AI - ${winnerConfig.model}) wins!`
+        return `Pink (AI - ${winnerConfig.model}) wins!`
       }
     }
 
-    if (status === 'blue-win') {
+    if (status === 'orange-win') {
       const config = props.gameConfig
-      const winnerConfig = config.bluePlayer
+      const winnerConfig = config.orangePlayer
 
       if (winnerConfig.type === PlayerType.HUMAN) {
-        return 'Blue (You) wins!'
+        return 'Orange (You) wins!'
       } else {
-        return `Blue (AI - ${winnerConfig.model}) wins!`
+        return `Orange (AI - ${winnerConfig.model}) wins!`
       }
     }
 
@@ -194,8 +194,8 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
 
     // Game is still in progress
     const config = props.gameConfig
-    const player = currentPlayer() === PlayerColor.RED ? config.redPlayer : config.bluePlayer
-    const colorName = currentPlayer() === PlayerColor.RED ? 'Red' : 'Blue'
+    const player = currentPlayer() === PlayerColor.PINK ? config.pinkPlayer : config.orangePlayer
+    const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
 
     if (player.type === PlayerType.HUMAN) {
       return `Current Player: ${colorName} (You)`
@@ -208,7 +208,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
   const getStatusClass = () => {
     const status = gameStatus()
 
-    if (status === 'red-win' || status === 'blue-win') {
+    if (status === 'pink-win' || status === 'orange-win') {
       return styles.winnerMessage
     }
 
@@ -226,7 +226,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
 
     const config = props.gameConfig
 
-    const player = currentPlayer() === PlayerColor.RED ? config.redPlayer : config.bluePlayer
+    const player = currentPlayer() === PlayerColor.PINK ? config.pinkPlayer : config.orangePlayer
     if (player.type === PlayerType.AI) return false
 
     // Check if the column is full

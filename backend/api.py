@@ -30,14 +30,14 @@ type Column = Annotated[int, Ge(1), Le(7)]
 
 
 class Move(BaseModel):
-    player: Literal['red', 'blue']
+    player: Literal['pink', 'orange']
     column: Column
 
 
 class GameState(BaseModel):
     moves: list[Move]
     mode: Mode
-    status: Literal['playing', 'red-win', 'blue-win', 'draw'] = 'playing'
+    status: Literal['playing', 'pink-win', 'orange-win', 'draw'] = 'playing'
 
 
 # until we have a db
@@ -61,9 +61,9 @@ async def game_move(game_id: UUID4, column: Column) -> GameState:
     except KeyError as e:
         raise HTTPException(status_code=404, detail='game not found') from e
 
-    if not game_state.moves or game_state.moves[-1].player == 'blue':
-        game_state.moves.append(Move(player='red', column=column))
-    game_state.moves.append(Move(player='blue', column=randrange(1, 7)))
+    if not game_state.moves or game_state.moves[-1].player == 'orange':
+        game_state.moves.append(Move(player='pink', column=column))
+    game_state.moves.append(Move(player='orange', column=randrange(1, 7)))
     return game_state
 
 

@@ -28,7 +28,7 @@ const GameBoard: Component<GameBoardProps> = (props) => {
                   <div class={styles.cell}>
                     {cellValue !== null && (
                       <div
-                        class={`${styles.token} ${cellValue === PlayerColor.RED ? styles.player1 : styles.player2}`}
+                        class={`${styles.token} ${cellValue === PlayerColor.PINK ? styles.player1 : styles.player2}`}
                       />
                     )}
                   </div>
