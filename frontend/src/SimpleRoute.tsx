@@ -36,10 +36,13 @@ const SimpleRoute: Component = () => {
     // Initial route check
     const currentPath = window.location.pathname
     // If not at a known route, redirect to home
-    if (currentPath !== '/' && currentPath !== '/connect4' && 
-        !currentPath.startsWith('/connect4/game/') && 
-        !currentPath.startsWith('/connect4/ai-vs-ai/') &&
-        !currentPath.startsWith('/connect4/human-vs-ai/')) {
+    if (
+      currentPath !== '/' &&
+      currentPath !== '/connect4' &&
+      !currentPath.startsWith('/connect4/game/') &&
+      !currentPath.startsWith('/connect4/ai-vs-ai/') &&
+      !currentPath.startsWith('/connect4/human-vs-ai/')
+    ) {
       // Reset to home
       navigate('/')
     }
@@ -78,8 +81,7 @@ const SimpleRoute: Component = () => {
     if (currentRoute.startsWith('/connect4/human-vs-ai/')) {
       console.log('Rendering HumanAIPlay')
       return <HumanAIPlay gameConfig={gameConfig()} />
-    } 
-    else if (currentRoute.startsWith('/connect4/ai-vs-ai/')) {
+    } else if (currentRoute.startsWith('/connect4/ai-vs-ai/')) {
       console.log('Rendering AivsAiPlay')
       return <AivsAiPlay gameConfig={gameConfig()} />
     }
@@ -89,12 +91,10 @@ const SimpleRoute: Component = () => {
       // We'll assume human-vs-ai for legacy routes
       console.log('Rendering legacy game route as HumanAIPlay')
       return <HumanAIPlay gameConfig={gameConfig()} />
-    } 
-    else if (currentRoute === '/connect4') {
+    } else if (currentRoute === '/connect4') {
       console.log('Rendering PlayerSelection')
       return <PlayerSelection />
-    } 
-    else {
+    } else {
       console.log('Rendering HomePage')
       return <HomePage />
     }
