@@ -1,13 +1,12 @@
-import asyncio
-from random import randrange
-from typing import Annotated, Literal
 from uuid import uuid4
 
 import logfire
-from annotated_types import Ge, Le
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import PlainTextResponse
 from pydantic import UUID4, BaseModel, Field
+
+from backend.agent import generate_next_move
+from backend.game import Column, GameState, Mode
 
 api_router = APIRouter()
 
@@ -16,28 +15,11 @@ class StartGame(BaseModel):
     game_id: UUID4 = Field(default_factory=uuid4, serialization_alias='gameID')
 
 
-type Mode = Literal['human-vs-ai', 'ai-vs-ai']
-
-
 @api_router.get('/games/start')
-def game_start(mode: Mode) -> StartGame:
+def start_game(mode: Mode) -> StartGame:
     g = StartGame()
     games[g.game_id] = GameState(moves=[], mode=mode)
     return g
-
-
-type Column = Annotated[int, Ge(1), Le(7)]
-
-
-class Move(BaseModel):
-    player: Literal['pink', 'orange']
-    column: Column
-
-
-class GameState(BaseModel):
-    moves: list[Move]
-    mode: Mode
-    status: Literal['playing', 'pink-win', 'orange-win', 'draw'] = 'playing'
 
 
 # until we have a db
@@ -45,7 +27,7 @@ games: dict[UUID4, GameState] = {}
 
 
 @api_router.get('/games/{game_id:uuid}/state')
-def game_state(game_id: UUID4) -> GameState:
+def get_game_state(game_id: UUID4) -> GameState:
     try:
         return games[game_id]
     except KeyError as e:
@@ -55,15 +37,16 @@ def game_state(game_id: UUID4) -> GameState:
 @api_router.post('/games/{game_id}/move')
 async def game_move(game_id: UUID4, column: Column) -> GameState:
     logfire.info(f'Handling move for {game_id=} {column=}')
-    await asyncio.sleep(3)
     try:
         game_state = games[game_id]
     except KeyError as e:
         raise HTTPException(status_code=404, detail='game not found') from e
 
-    if not game_state.moves or game_state.moves[-1].player == 'orange':
-        game_state.moves.append(Move(player='pink', column=column))
-    game_state.moves.append(Move(player='orange', column=randrange(1, 7)))
+    game_state = game_state.handle_move(column)
+    if game_state.status == 'playing':
+        opponent_column = await generate_next_move(game_state)
+        game_state = game_state.handle_move(opponent_column)
+    games[game_id] = game_state
     return game_state
 
 

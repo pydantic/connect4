@@ -3,7 +3,7 @@ from textwrap import dedent
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 
-from backend.game import FIRST_PLAYER, Column, GameState, Player
+from backend.game import FIRST_PLAYER, Column, GameState, get_player_icon
 
 
 @dataclass
@@ -30,12 +30,16 @@ def validate_move(ctx: RunContext[Connect4Deps], column: Column) -> Column:
 
 @connect4_agent.instructions
 def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
-    player_name = ctx.deps.game_state.get_next_player()
-    opponent_name: Player = 'X' if player_name == 'O' else 'O'
+    player = ctx.deps.game_state.get_next_player()
+
+    player_icon = get_player_icon(player)
+    opponent_icon = get_player_icon('pink' if player == 'orange' else 'orange')
+    first_player_icon = get_player_icon(FIRST_PLAYER)
+
     strategy_header = dedent(
         f"""\
-        You are an expert Connect 4 strategist playing as **{player_name}** 
-        (opponent is **{opponent_name}**; {FIRST_PLAYER} is the first player).
+        You are an expert Connect 4 strategist playing as **{player_icon}** 
+        (opponent is **{opponent_icon}**; {first_player_icon} is the first player).
 
         Apply these principles to choose the optimal move for the next turn:
         • Control the center columns to maximize future connections. 
@@ -54,3 +58,12 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
 
     board_state = ctx.deps.game_state.render_board()
     return strategy_header + board_state
+
+
+async def generate_next_move(
+    game_state: GameState,
+    *,
+    model: str = 'openai:gpt-4o',
+) -> Column:
+    result = await connect4_agent.run('Please generate the move', deps=Connect4Deps(game_state=game_state), model=model)
+    return result.output

@@ -7,7 +7,7 @@ from backend.game import GameState
 async def main():
     x_model = 'openai:gpt-4o'
     o_model = 'openai:gpt-4o'
-    game_state = GameState()
+    game_state = GameState(mode='ai-vs-ai')
     while game_state.status == 'playing':
         model = x_model if game_state.get_next_player() == 'X' else o_model
         print(game_state.render())

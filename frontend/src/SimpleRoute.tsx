@@ -60,13 +60,13 @@ const SimpleRoute: Component = () => {
   // Create a default game config
   const createDefaultConfig = (): GameConfig => ({
     mode: GameMode.HUMAN_VS_AI,
-    redPlayer: {
+    pinkPlayer: {
       type: PlayerType.HUMAN,
-      color: PlayerColor.RED,
+      color: PlayerColor.PINK,
     },
-    bluePlayer: {
+    orangePlayer: {
       type: PlayerType.AI,
-      color: PlayerColor.BLUE,
+      color: PlayerColor.ORANGE,
       model: AIModel.CLAUDE,
     },
   })

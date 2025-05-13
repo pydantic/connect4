@@ -12,11 +12,16 @@ class PlayerError(ValueError):
     """
 
 
-# type Mode = Literal['ai-vs-ai', 'human-vs-ai']
-type GameStatus = Literal['playing', 'X-win', 'O-win', 'draw']
-type Player = Literal['X', 'O']
+type Mode = Literal['ai-vs-ai', 'human-vs-ai']
+type GameStatus = Literal['playing', 'pink-win', 'orange-win', 'draw']
+type Player = Literal['pink', 'orange']
 
-FIRST_PLAYER: Player = 'X'
+
+def get_player_icon(player: Player) -> str:
+    return 'X' if player == 'pink' else 'O'
+
+
+FIRST_PLAYER: Player = 'pink'
 N_ROWS = 6
 N_COLUMNS = 7
 
@@ -29,7 +34,7 @@ class Move(BaseModel):
 
 
 class GameState(BaseModel):
-    # mode: Mode
+    mode: Mode  # TODO: Can we move this off the game state? It's not really relevant to the game logic
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
 
@@ -44,7 +49,7 @@ class GameState(BaseModel):
     def handle_move(self, column: Column) -> GameState:
         new_moves = self.moves + [Move(player=self.get_next_player(), column=column)]
         new_status = _get_status(new_moves)
-        return GameState(status=new_status, moves=new_moves)
+        return GameState(mode=self.mode, status=new_status, moves=new_moves)
 
     def get_next_player(self) -> Player:
         return _get_next_player(self.moves)
@@ -52,11 +57,17 @@ class GameState(BaseModel):
     def render(self) -> str:
         """Render the current game state as a string."""
         board = _render_board(self.moves)
-        if self.status != 'playing':
-            return f'{board}\nResult: {self.status}'
-        else:
+        if self.status == 'playing':
             next_player = _get_next_player(self.moves)
-            return f'{board}\nNext player: {next_player}'
+            return f'{board}\nNext player: {get_player_icon(next_player)}'
+        else:
+            if self.status == 'pink-win':
+                status_message = 'X wins'
+            elif self.status == 'orange-win':
+                status_message = 'O wins'
+            else:
+                status_message = 'draw'
+            return f'{board}\nResult: {status_message}'
 
     def render_board(self) -> str:
         return _render_board(self.moves)
@@ -77,7 +88,7 @@ def _render_board(moves: list[Move]) -> str:
         cells: list[str] = []
         for c in range(N_COLUMNS):
             column = columns[c]
-            player = column[r] if r < len(column) else '.'
+            player = get_player_icon(column[r]) if r < len(column) else '.'
             cells.append(player)
         rows.append(' '.join(cells))
 
@@ -130,10 +141,10 @@ def _get_status(moves: list[Move]) -> GameStatus:
                     break
 
         if count >= 4:
-            if last_player == 'X':
-                return 'X-win'
+            if last_player == 'pink':
+                return 'pink-win'
             else:
-                return 'O-win'
+                return 'orange-win'
     if len(moves) == N_ROWS * N_COLUMNS:
         return 'draw'
 
@@ -144,4 +155,4 @@ def _get_next_player(moves: list[Move]) -> Player:
     if not moves:
         return FIRST_PLAYER
     last_move = moves[-1]
-    return 'O' if last_move.player == 'X' else 'X'
+    return 'orange' if last_move.player == 'pink' else 'pink'

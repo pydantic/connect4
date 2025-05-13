@@ -45,14 +45,15 @@ h3 {
 .tabs {
   display: flex;
   width: 100%;
-  background-color: #46363F;
+  background-color: #46363f;
   border-radius: 8px;
   padding: 4px;
   position: relative;
   overflow: hidden;
 }
 
-.tab, .activeTab {
+.tab,
+.activeTab {
   flex: 1;
   text-align: center;
   padding: 0.5rem 1rem;
@@ -63,12 +64,12 @@ h3 {
   position: relative;
   z-index: 1;
   transition: all 0.2s ease;
-  color: #9BFCDA;
+  color: #9bfcda;
 }
 
 .activeTab {
-  color: #321A2C;
-  background-color: #9BFCDA;
+  color: #321a2c;
+  background-color: #9bfcda;
   border-radius: 4px;
 }
 
@@ -190,7 +191,8 @@ select {
     max-width: calc(100% - 16px);
   }
 
-  .tab, .activeTab {
+  .tab,
+  .activeTab {
     padding: 0.5rem 0.5rem;
     font-size: 0.9rem;
   }
