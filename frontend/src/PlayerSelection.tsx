@@ -3,6 +3,7 @@ import { GameMode, AI_MODELS, PlayerType, PlayerColor } from './game-types'
 import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
 import { useNavigate } from '@solidjs/router'
+import { Select } from './components/select'
 
 function randomModel() {
   return AI_MODELS[Math.floor(Math.random() * AI_MODELS.length)]
@@ -73,9 +74,7 @@ const PlayerSelection: Component = () => {
             <div class={styles.playerConfig}>
               <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (AI)</h3>
-              <select value={pinkAI()} onChange={(e) => setPinkAI(e.target.value)} disabled={isStartingGame()}>
-                <For each={AI_MODELS}>{(model) => <option value={model}>{model}</option>}</For>
-              </select>
+              <Select value={pinkAI()} onChange={setPinkAI} options={AI_MODELS} />
             </div>
           </Show>
 
@@ -83,16 +82,14 @@ const PlayerSelection: Component = () => {
             <div class={styles.playerConfig}>
               <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (You)</h3>
-              <p>Human Player</p>
+              <p class={styles.humanPlayer}>Human Player</p>
             </div>
           </Show>
 
           <div class={styles.playerConfig}>
             <div class={`${styles.gamePiece} ${styles.orangePiece}`}></div>
             <h3>Orange Player (AI)</h3>
-            <select value={orangeAI()} onChange={(e) => setOrangeAI(e.target.value)} disabled={isStartingGame()}>
-              <For each={AI_MODELS}>{(model) => <option value={model}>{model}</option>}</For>
-            </select>
+            <Select value={orangeAI()} onChange={setOrangeAI} options={AI_MODELS} />
           </div>
         </div>
 

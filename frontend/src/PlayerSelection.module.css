@@ -286,3 +286,10 @@ select {
     font-size: 0.9rem;
   }
 }
+.humanPlayer {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
