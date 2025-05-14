@@ -153,20 +153,20 @@ h3 {
 .pinkPiece {
   background: radial-gradient(circle at 30% 30%, #e05be0, #d239e1);
   border: 4px solid #c126ce;
-  box-shadow: 
+  box-shadow:
     inset 2px 2px 5px rgba(255, 255, 255, 0.4),
     inset -2px -2px 5px rgba(210, 57, 225, 0.4),
-    0 8px 15px rgba(0, 0, 0, 0.3), 
+    0 8px 15px rgba(0, 0, 0, 0.3),
     0 3px 5px rgba(0, 0, 0, 0.4);
 }
 
 .orangePiece {
-  background: radial-gradient(circle at 30% 30%, #FF8B7C, #ed6f59);
-  border: 4px solid #FF6550;
-  box-shadow: 
+  background: radial-gradient(circle at 30% 30%, #ff8b7c, #ed6f59);
+  border: 4px solid #ff6550;
+  box-shadow:
     inset 2px 2px 5px rgba(255, 255, 255, 0.4),
     inset -2px -2px 5px rgba(237, 111, 89, 0.4),
-    0 8px 15px rgba(0, 0, 0, 0.3), 
+    0 8px 15px rgba(0, 0, 0, 0.3),
     0 3px 5px rgba(0, 0, 0, 0.4);
 }
 
@@ -205,7 +205,8 @@ h3 {
 }
 
 /* Remove bottom edge shadow effect that wasn't working properly */
-.pinkPiece:after, .orangePiece:after {
+.pinkPiece:after,
+.orangePiece:after {
   box-shadow: none;
 }
 
