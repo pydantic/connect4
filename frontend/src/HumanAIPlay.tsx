@@ -3,40 +3,33 @@ import styles from './App.module.css'
 import { getGameState, makeMove, GameState } from './ai-service'
 import { GameConfig, PlayerType, PlayerColor, Board, createEmptyBoard } from './game-types'
 import GameBoard, { GameBoardControls, isColumnAvailable } from './GameBoard'
-import { A } from '@solidjs/router'
+import { A, useParams } from '@solidjs/router'
 
-interface HumanAIPlayProps {
-  gameConfig: GameConfig
-}
+const HumanAIPlay: Component = () => {
+  const { gameId } = useParams()
+  console.log('HumanAIPlay, gameId:', gameId)
 
-const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {  
-  // Extract gameId from path - match both legacy and new paths
-  const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:human-vs-ai|game)\/([^\/]+)/)
-  const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
-  console.log('HumanAIPlay found gameId:', gameId, 'from path:', window.location.pathname)
-
-  // Game state
-  const [gameIdState] = createSignal<string>(gameId)
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
   const [currentPlayer, setCurrentPlayer] = createSignal<PlayerColor>(PlayerColor.PINK)
   const [isAIThinking, setIsAIThinking] = createSignal<boolean>(false)
   const [isLoading, setIsLoading] = createSignal<boolean>(true)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [gameStatus, setGameStatus] = createSignal<'playing' | 'pink-win' | 'orange-win' | 'draw'>('playing')
+  const [OrangeAI, setOrangeAI] = createSignal<string>('')
 
   // Load game state from server
   const loadGameState = async () => {
     setIsLoading(true)
     setErrorMessage(null) // Clear any previous errors
     try {
-      console.log('Loading game state for gameId:', gameIdState())
-      const gameState = await getGameState(gameIdState())
+      console.log('Loading game state for gameId:', gameId)
+      const gameState = await getGameState(gameId)
       console.log('Received game state:', gameState)
 
-      if (gameState.mode !== 'human-vs-ai') {
+      if (gameState.pinkAI != null) {
         // Wrong game mode - this shouldn't happen but let's handle it
-        console.error('Error: Game mode is not human-vs-ai:', gameState.mode)
-        setErrorMessage(`Wrong game mode: ${gameState.mode}. Expected: human-vs-ai`)
+        console.error('Error: Game mode is not human-vs-ai')
+        setErrorMessage(`Wrong game mode, expected: human-vs-ai`)
       }
 
       applyGameState(gameState)
@@ -54,7 +47,8 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     let lastPlayer = PlayerColor.ORANGE // Start with ORANGE so first move will be PINK
 
     // Update the game status
-    setGameStatus(gameState.status as 'playing' | 'pink-win' | 'orange-win' | 'draw')
+    setGameStatus(gameState.status)
+    setOrangeAI(gameState.orangeAI)
 
     // Apply moves in order
     for (const move of gameState.moves) {
@@ -128,9 +122,9 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     setErrorMessage(null) // Clear any previous errors
 
     try {
-      console.log(`Making move in column ${columnIndex} for game ${gameIdState()}`)
+      console.log(`Making move in column ${columnIndex} for game ${gameId}`)
       // Call the API to make the move and get updated game state (including AI's response move)
-      const gameState = await makeMove(gameIdState(), columnIndex)
+      const gameState = await makeMove(gameId, columnIndex)
       console.log('Received updated game state after move:', gameState)
 
       // Apply the server-returned game state (overwrites our local changes)
@@ -158,50 +152,22 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
   const renderGameStatus = () => {
     if (isLoading()) {
       return 'Loading game state...'
+    } else if (isAIThinking()) {
+      return `${OrangeAI()} is thinking...`
     }
 
-    if (isAIThinking()) {
-      return 'AI is thinking'
-    }
-
-    // Check the game status from the server
     const status = gameStatus()
 
     if (status === 'pink-win') {
-      const config = props.gameConfig
-      const winnerConfig = config.pinkPlayer
-
-      if (winnerConfig.type === PlayerType.HUMAN) {
-        return 'Pink (You) wins!'
-      } else {
-        return `Pink (AI - ${winnerConfig.model}) wins!`
-      }
-    }
-
-    if (status === 'orange-win') {
-      const config = props.gameConfig
-      const winnerConfig = config.orangePlayer
-
-      if (winnerConfig.type === PlayerType.HUMAN) {
-        return 'Orange (You) wins!'
-      } else {
-        return `Orange (AI - ${winnerConfig.model}) wins!`
-      }
-    }
-
-    if (status === 'draw') {
+      return 'Pink (You) wins!'
+    } else if (status === 'orange-win') {
+      return `Orange (AI - ${OrangeAI()}) wins!`
+    } else if (status === 'draw') {
       return 'Game ended in a draw!'
-    }
-
-    // Game is still in progress
-    const config = props.gameConfig
-    const player = currentPlayer() === PlayerColor.PINK ? config.pinkPlayer : config.orangePlayer
-    const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
-
-    if (player.type === PlayerType.HUMAN) {
-      return `Current Player: ${colorName} (You)`
     } else {
-      return `Current Player: ${colorName} (AI - ${player.model})`
+      // Game is still in progress
+      const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
+      return `Current Player: ${colorName} (You)`
     }
   }
 
@@ -225,19 +191,13 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     // If game is loading, over, or it's an AI's turn, don't allow human moves
     if (isLoading() || isGameOver() || isAIThinking()) return false
 
-    const config = props.gameConfig
-
-    const player = currentPlayer() === PlayerColor.PINK ? config.pinkPlayer : config.orangePlayer
-    if (player.type === PlayerType.AI) return false
-
     // Check if the column is full
     return isColumnAvailable(board(), columnIndex)
   }
 
-
   return (
     <div class={styles.gameContainer}>
-      <h1>Connect Four</h1>
+      <h1>Connect Four &mdash; Human vs AI</h1>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
         <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
@@ -252,10 +212,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       <GameBoard board={board()} />
 
       <div class={styles.gameControls}>
-        <A
-          href="/"          
-          class={styles.resetButton}
-        >
+        <A href="/" class={styles.resetButton}>
           Return to Home
         </A>
         <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>

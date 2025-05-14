@@ -47,11 +47,6 @@ const PlayerSelection: Component = () => {
     }
   }
 
-  const handleStartGame = (mode: GameMode) => {
-    const route = mode === GameMode.HUMAN_VS_AI ? '/connect4/human-vs-ai' : '/connect4/ai-vs-ai'
-    navigate(route)
-  }
-
   return (
     <div class={styles.container}>
       <h1>Connect Four</h1>
@@ -64,14 +59,14 @@ const PlayerSelection: Component = () => {
           <div class={styles.tabs}>
             <button
               class={gameMode() === GameMode.HUMAN_VS_AI ? styles.activeTab : styles.tab}
-              onClick={() => handleStartGame(GameMode.HUMAN_VS_AI)}
+              onClick={() => setGameMode(GameMode.HUMAN_VS_AI)}
               disabled={isStartingGame()}
             >
               Human vs AI
             </button>
             <button
               class={gameMode() === GameMode.AI_VS_AI ? styles.activeTab : styles.tab}
-              onClick={() => handleStartGame(GameMode.AI_VS_AI)}
+              onClick={() => setGameMode(GameMode.AI_VS_AI)}
               disabled={isStartingGame()}
             >
               AI vs AI

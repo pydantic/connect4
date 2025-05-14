@@ -3,20 +3,13 @@ import styles from './App.module.css'
 import { getGameState, makeMove, GameState } from './ai-service'
 import { GameConfig, PlayerColor, Board, createEmptyBoard } from './game-types'
 import GameBoard from './GameBoard'
-import { A } from '@solidjs/router'
+import { A, useParams } from '@solidjs/router'
 
-interface AiVsAiPlayProps {
-  gameConfig: GameConfig
-}
-
-const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
-  // Extract gameId from path - match both legacy and new paths
-  const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:ai-vs-ai|game)\/([^\/]+)/)
-  const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
-  console.log('AivsAiPlay found gameId:', gameId, 'from path:', window.location.pathname)
+const AiVsAiPlay: Component = () => {
+  const { gameId } = useParams()
+  console.log('HumanAIPlay, gameId:', gameId)
 
   // Game state
-  const [gameIdState] = createSignal<string>(gameId)
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
   const [currentPlayer, setCurrentPlayer] = createSignal<PlayerColor>(PlayerColor.PINK)
   const [isAIThinking, setIsAIThinking] = createSignal<boolean>(false)
@@ -24,20 +17,24 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [gameStatus, setGameStatus] = createSignal<'playing' | 'pink-win' | 'orange-win' | 'draw'>('playing')
   const [lastMoveCount, setLastMoveCount] = createSignal<number>(0) // Track the last number of moves
+  const [PinkAI, setPinkAI] = createSignal<string>('')
+  const [OrangeAI, setOrangeAI] = createSignal<string>('')
 
   // Load game state from server
   const loadGameState = async () => {
     setIsLoading(true)
     setErrorMessage(null) // Clear any previous errors
     try {
-      console.log('Loading game state for gameId:', gameIdState())
-      const gameState = await getGameState(gameIdState())
+      const gameState = await getGameState(gameId)
       console.log('Received game state:', gameState)
 
-      if (gameState.mode !== 'ai-vs-ai') {
+      if (gameState.pinkAI === null) {
         // Wrong game mode - this shouldn't happen but let's handle it
-        console.error('Error: Game mode is not ai-vs-ai:', gameState.mode)
-        setErrorMessage(`Wrong game mode: ${gameState.mode}. Expected: ai-vs-ai`)
+        console.error('Error: Game mode is not ai-vs-ai')
+        setErrorMessage(`Wrong game mode, expected: ai-vs-ai`)
+      } else {
+        setPinkAI(gameState.pinkAI)
+        setOrangeAI(gameState.orangeAI)
       }
 
       // Apply the state
@@ -118,7 +115,7 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
 
     try {
       // First, check if we need to make a new move or just refresh state
-      const currentState = await getGameState(gameIdState())
+      const currentState = await getGameState(gameId)
 
       if (currentState.moves.length > lastMoveCount() && lastMoveCount() > 0) {
         // We already have a new move from the server but haven't displayed it yet
@@ -128,7 +125,7 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
       } else if (currentState.status === 'playing') {
         // Make a new move - the AI API handles determining the correct column
         console.log('Making new AI move')
-        const newState = await makeMove(gameIdState(), 0)
+        const newState = await makeMove(gameId, 0)
         applyGameState(newState)
       }
 
@@ -155,9 +152,7 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
   const renderGameStatus = () => {
     if (isLoading()) {
       return 'Loading game state...'
-    }
-
-    if (isAIThinking()) {
+    } else if (isAIThinking()) {
       return 'AI is thinking'
     }
 
@@ -165,26 +160,17 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
     const status = gameStatus()
 
     if (status === 'pink-win') {
-      const config = props.gameConfig
-      const winnerConfig = config.pinkPlayer
-      return `Pink (AI - ${winnerConfig.model}) wins!`
-    }
-
-    if (status === 'orange-win') {
-      const config = props.gameConfig
-      const winnerConfig = config.orangePlayer
-      return `Orange (AI - ${winnerConfig.model}) wins!`
-    }
-
-    if (status === 'draw') {
+      return `Pink (AI - ${PinkAI()}) wins!`
+    } else if (status === 'orange-win') {
+      return `Orange (AI - ${OrangeAI()}) wins!`
+    } else if (status === 'draw') {
       return 'Game ended in a draw!'
+    } else {
+      // Game is still in progress
+      const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
+      const aiName = currentPlayer() === PlayerColor.PINK ? PinkAI() : OrangeAI()
+      return `Current Player: ${colorName} (AI - ${aiName})`
     }
-
-    // Game is still in progress
-    const config = props.gameConfig
-    const player = currentPlayer() === PlayerColor.PINK ? config.pinkPlayer : config.orangePlayer
-    const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
-    return `Current Player: ${colorName} (AI - ${player.model})`
   }
 
   // Get the status message CSS class
@@ -202,10 +188,9 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
     return ''
   }
 
-
   return (
     <div class={styles.gameContainer}>
-      <h1>Connect 4</h1>
+      <h1>Connect 4 &mdash; AI vs AI</h1>
 
       <Show when={isLoading()}>
         <div class={styles.loadingMessage}>Loading game...</div>
@@ -220,11 +205,7 @@ const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
       </div>
 
       <div class={styles.gameControls}>
-        <A
-          href="/"
-          
-          class={styles.resetButton}
-        >
+        <A href="/" class={styles.resetButton}>
           Return to Home
         </A>
         <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>

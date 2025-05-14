@@ -1,9 +1,8 @@
 import { Component } from 'solid-js'
 import styles from './HomePage.module.css'
-import {  A } from '@solidjs/router'
+import { A } from '@solidjs/router'
 
-const HomePage: Component = () => {  
-
+const HomePage: Component = () => {
   return (
     <div class={styles.homeContainer}>
       <h1>Connect 4</h1>
