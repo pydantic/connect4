@@ -157,7 +157,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     }
 
     if (isAIThinking()) {
-      return 'AI is thinking...'
+      return 'AI is thinking'
     }
 
     // Check the game status from the server
@@ -214,7 +214,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       <div class={styles.aiVsAiMessage}>Auto-playing AI vs AI game</div>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p>{renderGameStatus()}</p>
+        <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
       </div>
 
       <div class={styles.gameControls}>

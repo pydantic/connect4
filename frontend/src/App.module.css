@@ -269,3 +269,25 @@ button {
     box-sizing: border-box;
   }
 }
+.thinking {
+  background: radial-gradient(
+    circle at 100%,
+    #d239e1,
+    #c22dd0 40%,
+    #e04eef 60%,
+    #f17aff 75%,
+    #d239e1 75%
+  );
+  font-weight: 600;
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animatedTextGradient 1500ms linear infinite;
+}
+
+@keyframes animatedTextGradient {
+  to {
+    background-position: 200% center;
+  }
+}
