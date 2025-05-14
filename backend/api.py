@@ -1,3 +1,4 @@
+from typing import Literal
 from uuid import uuid4
 
 import logfire
@@ -6,7 +7,7 @@ from fastapi.responses import PlainTextResponse
 from pydantic import UUID4, BaseModel, Field
 
 from backend.agent import generate_next_move
-from backend.game import Column, GameState, Mode
+from backend.game import Column, GameState
 
 api_router = APIRouter()
 
@@ -16,9 +17,9 @@ class StartGame(BaseModel):
 
 
 @api_router.get('/games/start')
-def start_game(mode: Mode) -> StartGame:
+def start_game(mode: Literal['ai-vs-ai', 'human-vs-ai']) -> StartGame:
     g = StartGame()
-    games[g.game_id] = GameState(moves=[], mode=mode)
+    games[g.game_id] = GameState(pink_ai=None if mode == 'human-vs-ai' else 'gpt-4o', orange_ai='gpt-4o', moves=[])
     return g
 
 

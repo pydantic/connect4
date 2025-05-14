@@ -22,5 +22,8 @@
   },
   "devDependencies": {
     "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.15.3"
   }
 }

@@ -34,7 +34,8 @@ class Move(BaseModel):
 
 
 class GameState(BaseModel):
-    mode: Mode  # TODO: Can we move this off the game state? It's not really relevant to the game logic
+    pink_ai: str | None = Field(serialization_alias='pinkAI')
+    orange_ai: str = Field(serialization_alias='orangeAI')
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
 
@@ -49,7 +50,7 @@ class GameState(BaseModel):
     def handle_move(self, column: Column) -> GameState:
         new_moves = self.moves + [Move(player=self.get_next_player(), column=column)]
         new_status = _get_status(new_moves)
-        return GameState(mode=self.mode, status=new_status, moves=new_moves)
+        return GameState(pink_ai=self.pink_ai, orange_ai=self.orange_ai, status=new_status, moves=new_moves)
 
     def get_next_player(self) -> Player:
         return _get_next_player(self.moves)

@@ -35,7 +35,8 @@ interface Move {
 // Interface for game state response
 export interface GameState {
   moves: Move[]
-  mode: 'human-vs-ai' | 'ai-vs-ai'
+  pinkAI: string | null
+  orangeAI: string
   status: 'playing' | 'pink-win' | 'orange-win' | 'draw'
 }
 

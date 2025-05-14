@@ -2,6 +2,7 @@ import { Component, createSignal, Show, For, onMount } from 'solid-js'
 import { GameMode, AIModel, PlayerType, PlayerColor, PlayerConfig, GameConfig } from './game-types'
 import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
+import { useNavigate } from '@solidjs/router'
 
 // For debugging
 console.log('PlayerSelection module loaded')
@@ -13,6 +14,7 @@ const PlayerSelection: Component = () => {
   const [orangePlayerModel, setOrangePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
+  const navigate = useNavigate()
 
   onMount(() => {
     console.log('PlayerSelection component mounted')
@@ -37,7 +39,7 @@ const PlayerSelection: Component = () => {
       // Use the same mode string format for routing
       const route = `/connect4/${backendModeParam}/${gameId}`
       console.log(`Navigating to route: ${route}`)
-      window.navigate(route)
+      navigate(route)
     } catch (error) {
       console.error('Failed to start game:', error)
       setErrorMessage(`Failed to start the game: ${error instanceof Error ? error.message : 'Unknown error'}`)
