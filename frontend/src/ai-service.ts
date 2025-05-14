@@ -71,9 +71,12 @@ interface AIResponse {
  * @param columnIndex The column index (0-6) where the player wants to place their token
  * @returns A Promise that resolves to the updated game state from the server
  */
-export async function makeMove(gameId: string, columnIndex: number): Promise<GameState> {
-  // Convert column index (0-6) to column number (1-7)
-  let url = `/api/games/${gameId}/move?column=${columnIndex + 1}`
+export async function makeMove(gameId: string, columnIndex?: number): Promise<GameState> {
+  let url = `/api/games/${gameId}/move`
+  if (columnIndex !== undefined) {
+    // Convert column index (0-6) to column number (1-7)
+    url += `?column=${columnIndex + 1}`
+  }
 
   // Make the API request
   const response = await fetch(url, { method: 'POST' })

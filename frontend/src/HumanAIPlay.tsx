@@ -153,7 +153,7 @@ const HumanAIPlay: Component = () => {
     if (isLoading()) {
       return 'Loading game state...'
     } else if (isAIThinking()) {
-      return `${OrangeAI()} is thinking...`
+      return `Orange (${OrangeAI()}) is thinking...`
     }
 
     const status = gameStatus()
@@ -165,9 +165,7 @@ const HumanAIPlay: Component = () => {
     } else if (status === 'draw') {
       return 'Game ended in a draw!'
     } else {
-      // Game is still in progress
-      const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
-      return `Current Player: ${colorName} (You)`
+      return 'Current Player: Pink (You)'
     }
   }
 

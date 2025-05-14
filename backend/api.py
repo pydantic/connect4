@@ -36,14 +36,22 @@ def get_game_state(game_id: UUID4) -> GameState:
 
 
 @api_router.post('/games/{game_id}/move')
-async def game_move(game_id: UUID4, column: Column) -> GameState:
-    logfire.info(f'Handling move for {game_id=} {column=}')
+async def game_move(game_id: UUID4, column: Column | None = None) -> GameState:
+    """
+    Either:
+        Takes a move from a human player, applies it, then makes an AI move
+        or, in ai-vs-ai mode, generates a move for the AI player only
+
+    Always returns the updated game state.
+    """
+    logfire.info(f'Handling human move for {game_id=} {column=}')
     try:
         game_state = games[game_id]
     except KeyError as e:
         raise HTTPException(status_code=404, detail='game not found') from e
 
-    game_state = game_state.handle_move(column)
+    if column is not None:
+        game_state = game_state.handle_move(column)
     if game_state.status == 'playing':
         opponent_column = await generate_next_move(game_state)
         game_state = game_state.handle_move(opponent_column)

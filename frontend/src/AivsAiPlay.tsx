@@ -12,11 +12,9 @@ const AiVsAiPlay: Component = () => {
   // Game state
   const [board, setBoard] = createSignal<Board>(createEmptyBoard())
   const [currentPlayer, setCurrentPlayer] = createSignal<PlayerColor>(PlayerColor.PINK)
-  const [isAIThinking, setIsAIThinking] = createSignal<boolean>(false)
   const [isLoading, setIsLoading] = createSignal<boolean>(true)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [gameStatus, setGameStatus] = createSignal<'playing' | 'pink-win' | 'orange-win' | 'draw'>('playing')
-  const [lastMoveCount, setLastMoveCount] = createSignal<number>(0) // Track the last number of moves
   const [PinkAI, setPinkAI] = createSignal<string>('')
   const [OrangeAI, setOrangeAI] = createSignal<string>('')
 
@@ -61,10 +59,7 @@ const AiVsAiPlay: Component = () => {
     let lastPlayer = PlayerColor.ORANGE // Start with ORANGE so first move will be PINK
 
     // Update the game status
-    setGameStatus(gameState.status as 'playing' | 'pink-win' | 'orange-win' | 'draw')
-
-    // Update our move counter
-    setLastMoveCount(gameState.moves.length)
+    setGameStatus(gameState.status)
 
     // Apply moves in order
     for (const move of gameState.moves) {
@@ -98,39 +93,16 @@ const AiVsAiPlay: Component = () => {
     setCurrentPlayer(nextPlayer)
   }
 
-  // Helper method to check if the game is over
-  const isGameOver = () => {
-    return gameStatus() !== 'playing'
-  }
-
   // Function to handle AI vs AI autoplay
   const autoPlayAIvsAI = async () => {
-    // If the game is over or already processing, don't do anything
-    if (isGameOver() || isAIThinking()) {
-      return
-    }
-
-    setIsAIThinking(true)
     setErrorMessage(null)
 
     try {
-      // First, check if we need to make a new move or just refresh state
-      const currentState = await getGameState(gameId)
-
-      if (currentState.moves.length > lastMoveCount() && lastMoveCount() > 0) {
-        // We already have a new move from the server but haven't displayed it yet
-        // Just apply the state to display it
-        console.log('Displaying existing move from server')
-        applyGameState(currentState)
-      } else if (currentState.status === 'playing') {
-        // Make a new move - the AI API handles determining the correct column
-        console.log('Making new AI move')
-        const newState = await makeMove(gameId, 0)
-        applyGameState(newState)
-      }
+      const newState = await makeMove(gameId)
+      applyGameState(newState)
 
       // If the game is still going, schedule the next move
-      if (gameStatus() === 'playing') {
+      if (newState.status === 'playing') {
         setTimeout(() => {
           autoPlayAIvsAI()
         }, 1000)
@@ -138,8 +110,6 @@ const AiVsAiPlay: Component = () => {
     } catch (error) {
       console.error('Error in AI vs AI autoplay:', error)
       setErrorMessage(`Error in AI autoplay: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
-      setIsAIThinking(false)
     }
   }
 
@@ -152,8 +122,6 @@ const AiVsAiPlay: Component = () => {
   const renderGameStatus = () => {
     if (isLoading()) {
       return 'Loading game state...'
-    } else if (isAIThinking()) {
-      return 'AI is thinking'
     }
 
     // Check the game status from the server
@@ -169,7 +137,7 @@ const AiVsAiPlay: Component = () => {
       // Game is still in progress
       const colorName = currentPlayer() === PlayerColor.PINK ? 'Pink' : 'Orange'
       const aiName = currentPlayer() === PlayerColor.PINK ? PinkAI() : OrangeAI()
-      return `Current Player: ${colorName} (AI - ${aiName})`
+      return `${colorName} (${aiName}) is thinking...`
     }
   }
 
@@ -201,7 +169,7 @@ const AiVsAiPlay: Component = () => {
       <div class={styles.aiVsAiMessage}>Auto-playing AI vs AI game</div>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
+        <p class={gameStatus() === 'playing' ? styles.thinking : ''}>{renderGameStatus()}</p>
       </div>
 
       <div class={styles.gameControls}>
