@@ -270,14 +270,7 @@ button {
   }
 }
 .thinking {
-  background: radial-gradient(
-    circle at 100%,
-    #FF6550,
-    #FF4D34 40%,
-    #FF8B7C 60%,
-    #FFABA0 75%,
-    #FF6550 75%
-  );
+  background: radial-gradient(circle at 100%, #ff6550, #ff4d34 40%, #ff8b7c 60%, #ffaba0 75%, #ff6550 75%);
   font-weight: 600;
   background-size: 200% auto;
   color: #000;

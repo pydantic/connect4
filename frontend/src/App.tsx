@@ -5,8 +5,6 @@ import HomePage from './HomePage'
 import PlayerSelection from './PlayerSelection'
 import HumanAIPlay from './HumanAIPlay'
 import AiVsAiPlay from './AivsAiPlay'
-import { createSignal } from 'solid-js'
-import { GameConfig, GameMode, PlayerType, PlayerColor, AIModel } from './game-types'
 
 const App: Component = () => {
   return (
