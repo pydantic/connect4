@@ -194,8 +194,8 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     }
 
     // Show "AI is thinking" regardless of whose turn, if an operation is in progress
-    if (isAIThinking() && gameStatus() === 'playing') {
-      return 'AI is thinking...'
+    if (isAIThinking()) {
+      return 'AI is thinking'
     }
 
     // Check the game status from the server

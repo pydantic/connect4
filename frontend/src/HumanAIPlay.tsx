@@ -160,7 +160,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     }
 
     if (isAIThinking()) {
-      return 'AI is thinking...'
+      return 'AI is thinking'
     }
 
     // Check the game status from the server
@@ -238,7 +238,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       <h1>Connect Four</h1>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p>{renderGameStatus()}</p>
+        <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
       </div>
 
       <Show when={isLoading()}>
