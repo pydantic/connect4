@@ -8,6 +8,10 @@ interface AivsAiPlayProps {
   gameConfig: GameConfig
 }
 
+// Define delays for AI autoplay
+const AI_INTER_MOVE_DELAY = 1500 // ms - Delay between one AI's move and the next
+const AI_THINKING_REFRESH_DELAY = 500 // ms - Short delay after requesting a move, before refreshing state
+
 const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
   // Extract gameId from path - match both legacy and new paths
   const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:ai-vs-ai|game)\/([^\/]+)/)
@@ -22,7 +26,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
   const [isLoading, setIsLoading] = createSignal<boolean>(true)
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [gameStatus, setGameStatus] = createSignal<'playing' | 'pink-win' | 'orange-win' | 'draw'>('playing')
-  const [lastMoveCount, setLastMoveCount] = createSignal<number>(0) // Track the last number of moves
+  const [lastMoveCount, setLastMoveCount] = createSignal<number>(0) // Track the number of moves applied to the local board
 
   // Load game state from server
   const loadGameState = async () => {
@@ -39,15 +43,14 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
         setErrorMessage(`Wrong game mode: ${gameState.mode}. Expected: ai-vs-ai`)
       }
 
-      // Apply the state
+      // Apply the initial state
       applyGameState(gameState)
 
       // If the game is still going, start autoplay
       if (gameState.status === 'playing') {
-        // Use a small delay to let the UI update first
         setTimeout(() => {
           autoPlayAIvsAI()
-        }, 500)
+        }, 500) // Initial delay before first AI action
       }
     } catch (error) {
       console.error('Error loading game state:', error)
@@ -58,45 +61,38 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
   }
 
   // Apply game state from server response
+  // This function now applies all moves in gameState.moves up to its length.
+  // It's used for initial load and for applying single new moves during autoplay.
   const applyGameState = (gameState: GameState) => {
     const newBoard = createEmptyBoard()
-    let lastPlayer = PlayerColor.ORANGE // Start with ORANGE so first move will be PINK
+    let lastPlayerApplied = PlayerColor.ORANGE // Default for calculating next player if no moves
 
-    // Update the game status
+    // Update the game status based on the provided gameState
     setGameStatus(gameState.status as 'playing' | 'pink-win' | 'orange-win' | 'draw')
 
-    // Update our move counter
+    // Update our local move counter to reflect how many moves are in this gameState
     setLastMoveCount(gameState.moves.length)
 
     // Apply moves in order
     for (const move of gameState.moves) {
-      // Convert column number (1-7) to index (0-6)
       const columnIndex = move.column - 1
-
-      // Convert player string to enum
       const playerColor = move.player === 'pink' ? PlayerColor.PINK : PlayerColor.ORANGE
-
-      // Find the lowest empty cell in the selected column
       let placed = false
       for (let rowIndex = 5; rowIndex >= 0; rowIndex--) {
         if (newBoard[rowIndex][columnIndex] === null) {
           newBoard[rowIndex][columnIndex] = playerColor
-          lastPlayer = playerColor
+          lastPlayerApplied = playerColor
           placed = true
           break
         }
       }
-
       if (!placed) {
         console.warn(`Couldn't place token in column ${columnIndex} - column is full!`)
       }
     }
 
-    // Set the board state
     setBoard(newBoard)
-
-    // Set the current player to the opposite of the last player
-    const nextPlayer = lastPlayer === PlayerColor.PINK ? PlayerColor.ORANGE : PlayerColor.PINK
+    const nextPlayer = lastPlayerApplied === PlayerColor.PINK ? PlayerColor.ORANGE : PlayerColor.PINK
     setCurrentPlayer(nextPlayer)
   }
 
@@ -105,10 +101,10 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     return gameStatus() !== 'playing'
   }
 
-  // Function to handle AI vs AI autoplay
+  // Function to handle AI vs AI autoplay, processing one move at a time
   const autoPlayAIvsAI = async () => {
-    // If the game is over or already processing, don't do anything
     if (isGameOver() || isAIThinking()) {
+      // If game is over or an AI operation is already in progress (due to setTimeout), do nothing.
       return
     }
 
@@ -116,31 +112,72 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     setErrorMessage(null)
 
     try {
-      // First, check if we need to make a new move or just refresh state
-      const currentState = await getGameState(gameIdState())
+      // Fetch the latest state from the server
+      const serverGameState = await getGameState(gameIdState())
+      
+      // Update game status immediately from server state. This is important for isGameOver().
+      setGameStatus(serverGameState.status as 'playing' | 'pink-win' | 'orange-win' | 'draw')
 
-      if (currentState.moves.length > lastMoveCount() && lastMoveCount() > 0) {
-        // We already have a new move from the server but haven't displayed it yet
-        // Just apply the state to display it
-        console.log('Displaying existing move from server')
-        applyGameState(currentState)
-      } else if (currentState.status === 'playing') {
-        // Make a new move - the AI API handles determining the correct column
-        console.log('Making new AI move')
-        const newState = await makeMove(gameIdState(), 0)
-        applyGameState(newState)
+      if (isGameOver()) {
+        // If game ended, apply the final server state and stop.
+        applyGameState(serverGameState)
+        setIsAIThinking(false)
+        return
       }
 
-      // If the game is still going, schedule the next move
-      if (gameStatus() === 'playing') {
+      const localMovesCount = lastMoveCount()
+      const serverMoves = serverGameState.moves
+
+      if (serverMoves.length > localMovesCount) {
+        // Server has new moves that we haven't displayed yet.
+        // Apply only the *next* new move.
+        console.log(`Server has ${serverMoves.length} moves, local has ${localMovesCount}. Applying next move.`);
+        const tempGameStateForSingleMove: GameState = {
+          ...serverGameState,
+          moves: serverMoves.slice(0, localMovesCount + 1), // Moves up to and including the next one
+        }
+        applyGameState(tempGameStateForSingleMove) // This updates board and lastMoveCount()
+
+        // After applying one move, check status again (as applyGameState updates it)
+        if (gameStatus() === 'playing') {
+          // Schedule the next action (either processing another pending move or making a new one)
+          setTimeout(() => {
+            setIsAIThinking(false) // Clear thinking state before next cycle
+            autoPlayAIvsAI()
+          }, AI_INTER_MOVE_DELAY)
+        } else {
+          // Game ended after applying this move, ensure full final state is shown
+          applyGameState(serverGameState)
+          setIsAIThinking(false)
+        }
+      } else if (serverMoves.length === localMovesCount && gameStatus() === 'playing') {
+        // Local state is up-to-date with server, and game is ongoing. Time to make a new move.
+        console.log('Local state up-to-date. Making new AI move.')
+        await makeMove(gameIdState(), 0) // Request AI to make a move (column 0 is placeholder for AI)
+        
+        // After makeMove, the server state is updated.
+        // We don't use the direct response of makeMove.
+        // Instead, we schedule autoPlayAIvsAI to re-fetch state.
+        // This ensures that if makeMove resulted in one or more actual moves on the server,
+        // they are picked up by the (serverMoves.length > localMovesCount) branch above
+        // and processed one by one with delays.
         setTimeout(() => {
+          setIsAIThinking(false) // Clear thinking state before next cycle
           autoPlayAIvsAI()
-        }, 1000)
+        }, AI_THINKING_REFRESH_DELAY)
+      } else {
+        // Fallback: localMovesCount might be > serverMoves.length (should not happen often)
+        // or game is not 'playing' but wasn't caught by isGameOver earlier.
+        console.warn('autoPlayAIvsAI: No action taken or unexpected state.', {
+          status: gameStatus(),
+          serverMoves: serverMoves.length,
+          localMoves: localMovesCount,
+        })
+        setIsAIThinking(false) // Ensure thinking is cleared
       }
     } catch (error) {
       console.error('Error in AI vs AI autoplay:', error)
       setErrorMessage(`Error in AI autoplay: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
       setIsAIThinking(false)
     }
   }
@@ -156,7 +193,8 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       return 'Loading game state...'
     }
 
-    if (isAIThinking()) {
+    // Show "AI is thinking" regardless of whose turn, if an operation is in progress
+    if (isAIThinking() && gameStatus() === 'playing') {
       return 'AI is thinking...'
     }
 
@@ -214,7 +252,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       <div class={styles.aiVsAiMessage}>Auto-playing AI vs AI game</div>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p>{renderGameStatus()}</p>
+        <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
       </div>
 
       <div class={styles.gameControls}>
