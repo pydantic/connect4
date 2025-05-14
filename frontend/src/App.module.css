@@ -291,3 +291,47 @@ button {
     background-position: 200% center;
   }
 }
+
+/* Autoplay badge styles */
+.autoplayBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  background-color: #46363f;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 12px;
+  font-weight: normal;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  vertical-align: middle;
+  position: relative;
+}
+
+/* Live indicator dot */
+.autoplayBadge::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #9bfcda;
+  margin-right: 8px;
+  animation: pulseDot 2s infinite;
+  box-shadow: 0 0 5px rgba(155, 252, 218, 0.7);
+}
+
+@keyframes pulseDot {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
