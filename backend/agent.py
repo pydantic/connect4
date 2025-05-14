@@ -65,7 +65,7 @@ async def generate_next_move(game_state: GameState) -> Column:
     if player == 'orange':
         model = game_state.orange_ai
     else:
-        assert game_state.pink_ai is not None, 'Pink AI is not initialized'
+        assert game_state.pink_ai is not None, 'Pink AI is not set'
         model = game_state.pink_ai
     result = await connect4_agent.run('Please generate the move', deps=Connect4Deps(game_state=game_state), model=model)
     return result.output

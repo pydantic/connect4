@@ -1,41 +1,40 @@
-from uuid import uuid4
+from typing import Annotated
 
 import logfire
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import PlainTextResponse
 from pydantic import UUID4, BaseModel, Field
 
-from backend.agent import generate_next_move
-from backend.game import AIModel, Column, GameState
+from .agent import generate_next_move
+from .db import DB
+from .game import AIModel, Column, GameState
 
 api_router = APIRouter()
 
 
 class StartGame(BaseModel):
-    game_id: UUID4 = Field(default_factory=uuid4, serialization_alias='gameID')
+    game_id: UUID4 = Field(serialization_alias='gameID')
 
 
 @api_router.get('/games/start')
-def start_game(orange_ai: AIModel, pink_ai: AIModel | None = None) -> StartGame:
-    g = StartGame()
-    games[g.game_id] = GameState(pink_ai=pink_ai, orange_ai=orange_ai, moves=[])
-    return g
-
-
-# until we have a db
-games: dict[UUID4, GameState] = {}
+async def start_game(
+    db: Annotated[DB, Depends(DB.get_dep)], orange_ai: AIModel, pink_ai: AIModel | None = None
+) -> StartGame:
+    game_id = await db.create_game(orange_ai, pink_ai)
+    return StartGame(game_id=game_id)
 
 
 @api_router.get('/games/{game_id:uuid}/state')
-def get_game_state(game_id: UUID4) -> GameState:
-    try:
-        return games[game_id]
-    except KeyError as e:
-        raise HTTPException(status_code=404, detail='game not found') from e
+async def get_game_state(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4) -> GameState:
+    async with db.get_game(game_id) as g:
+        if g:
+            return g.game_state
+        else:
+            raise HTTPException(status_code=404, detail='game not found')
 
 
 @api_router.post('/games/{game_id}/move')
-async def game_move(game_id: UUID4, column: Column | None = None) -> GameState:
+async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, column: Column | None = None) -> GameState:
     """
     Either:
         Takes a move from a human player, applies it, then makes an AI move
@@ -43,18 +42,25 @@ async def game_move(game_id: UUID4, column: Column | None = None) -> GameState:
 
     Always returns the updated game state.
     """
-    logfire.info(f'Handling human move for {game_id=} {column=}')
-    try:
-        game_state = games[game_id]
-    except KeyError as e:
-        raise HTTPException(status_code=404, detail='game not found') from e
+    logfire.info(f'Handling move for {game_id=} {column=}')
+    async with db.get_game(game_id) as g:
+        if not g:
+            raise HTTPException(status_code=404, detail='game not found')
+        elif g.game_state.pink_ai and column is not None:
+            raise HTTPException(status_code=400, detail='column may not be provided for ai-vs-ai')
+        elif g.game_state.pink_ai is None and column is None:
+            raise HTTPException(status_code=400, detail='column must be provided for human-vs-ai')
 
-    if column is not None:
-        game_state = game_state.handle_move(column)
+        if column is not None:
+            await g.handle_move(column)
+        game_state = g.game_state
+
     if game_state.status == 'playing':
-        opponent_column = await generate_next_move(game_state)
-        game_state = game_state.handle_move(opponent_column)
-    games[game_id] = game_state
+        ai_column = await generate_next_move(g.game_state)
+        async with db.get_game(game_id) as g:
+            assert g
+            await g.handle_move(ai_column)
+        game_state = g.game_state
     return game_state
 
 
