@@ -269,8 +269,18 @@ button {
     box-sizing: border-box;
   }
 }
-.thinking {
+.orangeThinking {
   background: radial-gradient(circle at 100%, #ff6550, #ff4d34 40%, #ff8b7c 60%, #ffaba0 75%, #ff6550 75%);
+  font-weight: 600;
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animatedTextGradient 1500ms linear infinite;
+}
+
+.pinkThinking {
+  background: radial-gradient(circle at 100%, #d239e1, #c126ce 40%, #e05be0 60%, #d239e1 75%, #c126ce 75%);
   font-weight: 600;
   background-size: 200% auto;
   color: #000;
