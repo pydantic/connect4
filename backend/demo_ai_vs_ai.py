@@ -5,13 +5,13 @@ from backend.game import GameState
 
 
 async def main():
-    x_model = 'openai:gpt-4o'
-    o_model = 'openai:gpt-4o'
-    game_state = GameState(mode='ai-vs-ai')
+    pink_ai = 'openai:gpt-4o'
+    orange_ai = 'openai:gpt-4o'
+    game_state = GameState(pink_ai=pink_ai, orange_ai=orange_ai)
     while game_state.status == 'playing':
-        model = x_model if game_state.get_next_player() == 'X' else o_model
+        model = pink_ai if game_state.get_next_player() == 'X' else orange_ai
         print(game_state.render())
-        print(f'(X={x_model} | O={o_model})')
+        print(f'(X={pink_ai} | O={orange_ai})')
         print('---')
         result = await connect4_agent.run(
             'Please generate the move', deps=Connect4Deps(game_state=game_state), model=model

@@ -1,17 +1,18 @@
 import { Component, createSignal, Show, For, onMount } from 'solid-js'
-import { GameMode, AIModel, PlayerType, PlayerColor, PlayerConfig, GameConfig } from './game-types'
+import { GameMode, AI_MODELS, PlayerType, PlayerColor } from './game-types'
 import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
 import { useNavigate } from '@solidjs/router'
 
-// For debugging
-console.log('PlayerSelection module loaded')
+function randomModel() {
+  return AI_MODELS[Math.floor(Math.random() * AI_MODELS.length)]
+}
 
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
-  const [gameMode, setGameMode] = createSignal<GameMode>(GameMode.HUMAN_VS_AI)
-  const [pinkPlayerModel, setPinkPlayerModel] = createSignal<AIModel>(AIModel.CLAUDE)
-  const [orangePlayerModel, setOrangePlayerModel] = createSignal<AIModel>(AIModel.GPT_4)
+  const [gameMode, setGameMode] = createSignal<GameMode>('human-vs-ai')
+  const [pinkAI, setPinkAI] = createSignal(randomModel())
+  const [orangeAI, setOrangeAI] = createSignal(randomModel())
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
   const navigate = useNavigate()
@@ -20,24 +21,17 @@ const PlayerSelection: Component = () => {
     console.log('PlayerSelection component mounted')
   })
 
-  // Available AI models
-  const aiModels = [AIModel.GPT_4, AIModel.GPT_3_5, AIModel.CLAUDE, AIModel.GEMINI]
-
   const startGame = async () => {
     setErrorMessage(null)
     setIsStartingGame(true)
 
     try {
-      // Get the backend mode string format
-      const backendModeParam = gameMode() === GameMode.HUMAN_VS_AI ? 'human-vs-ai' : 'ai-vs-ai'
-      console.log(`Starting game with mode: ${backendModeParam}`)
-
       // Get a game ID from the server
-      const gameId = await initializeGame(gameMode())
+      const gameId = await initializeGame(orangeAI(), gameMode() == 'human-vs-ai' ? null : pinkAI())
       console.log('Got game ID from server:', gameId)
 
       // Use the same mode string format for routing
-      const route = `/connect4/${backendModeParam}/${gameId}`
+      const route = `/connect4/${gameMode()}/${gameId}`
       console.log(`Navigating to route: ${route}`)
       navigate(route)
     } catch (error) {
@@ -58,15 +52,15 @@ const PlayerSelection: Component = () => {
           <h3>Choose Game Mode</h3>
           <div class={styles.tabs}>
             <button
-              class={gameMode() === GameMode.HUMAN_VS_AI ? styles.activeTab : styles.tab}
-              onClick={() => setGameMode(GameMode.HUMAN_VS_AI)}
+              class={gameMode() === 'human-vs-ai' ? styles.activeTab : styles.tab}
+              onClick={() => setGameMode('human-vs-ai')}
               disabled={isStartingGame()}
             >
               Human vs AI
             </button>
             <button
-              class={gameMode() === GameMode.AI_VS_AI ? styles.activeTab : styles.tab}
-              onClick={() => setGameMode(GameMode.AI_VS_AI)}
+              class={gameMode() === 'ai-vs-ai' ? styles.activeTab : styles.tab}
+              onClick={() => setGameMode('ai-vs-ai')}
               disabled={isStartingGame()}
             >
               AI vs AI
@@ -75,21 +69,17 @@ const PlayerSelection: Component = () => {
         </div>
 
         <div class={styles.playerSelection}>
-          <Show when={gameMode() === GameMode.AI_VS_AI}>
+          <Show when={gameMode() === 'ai-vs-ai'}>
             <div class={styles.playerConfig}>
               <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (AI)</h3>
-              <select
-                value={pinkPlayerModel()}
-                onChange={(e) => setPinkPlayerModel(e.target.value as AIModel)}
-                disabled={isStartingGame()}
-              >
-                <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>
+              <select value={pinkAI()} onChange={(e) => setPinkAI(e.target.value)} disabled={isStartingGame()}>
+                <For each={AI_MODELS}>{(model) => <option value={model}>{model}</option>}</For>
               </select>
             </div>
           </Show>
 
-          <Show when={gameMode() === GameMode.HUMAN_VS_AI}>
+          <Show when={gameMode() === 'human-vs-ai'}>
             <div class={styles.playerConfig}>
               <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (You)</h3>
@@ -100,12 +90,8 @@ const PlayerSelection: Component = () => {
           <div class={styles.playerConfig}>
             <div class={`${styles.gamePiece} ${styles.orangePiece}`}></div>
             <h3>Orange Player (AI)</h3>
-            <select
-              value={orangePlayerModel()}
-              onChange={(e) => setOrangePlayerModel(e.target.value as AIModel)}
-              disabled={isStartingGame()}
-            >
-              <For each={aiModels}>{(model) => <option value={model}>{model}</option>}</For>
+            <select value={orangeAI()} onChange={(e) => setOrangeAI(e.target.value)} disabled={isStartingGame()}>
+              <For each={AI_MODELS}>{(model) => <option value={model}>{model}</option>}</For>
             </select>
           </div>
         </div>

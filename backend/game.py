@@ -12,9 +12,20 @@ class PlayerError(ValueError):
     """
 
 
-type Mode = Literal['ai-vs-ai', 'human-vs-ai']
 type GameStatus = Literal['playing', 'pink-win', 'orange-win', 'draw']
 type Player = Literal['pink', 'orange']
+type AIModel = Literal[
+    'openai:gpt-4o',
+    'openai:gpt-4o-mini',
+    'openai:gpt-4.1',
+    'openai:gpt-4.1-mini',
+    'anthropic:claude-3-7-sonnet-latest',
+    'anthropic:claude-3-5-haiku-latest',
+    'google-vertex:gemini-2.5-pro-preview-03-25',
+    'google-vertex:gemini-2.0-flash',
+    'groq:llama-3.3-70b-versatile',
+    'groq:deepseek-r1-distill-llama-70b',
+]
 
 
 def get_player_icon(player: Player) -> str:
@@ -34,8 +45,8 @@ class Move(BaseModel):
 
 
 class GameState(BaseModel):
-    pink_ai: str | None = Field(serialization_alias='pinkAI')
-    orange_ai: str = Field(serialization_alias='orangeAI')
+    pink_ai: AIModel | None = Field(serialization_alias='pinkAI')
+    orange_ai: AIModel = Field(serialization_alias='orangeAI')
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
 

@@ -1,7 +1,7 @@
 import { Component, createSignal, Show, onMount } from 'solid-js'
 import styles from './App.module.css'
 import { getGameState, makeMove, GameState } from './ai-service'
-import { GameConfig, PlayerColor, Board, createEmptyBoard } from './game-types'
+import { PlayerColor, Board, createEmptyBoard } from './game-types'
 import GameBoard from './GameBoard'
 import { A, useParams } from '@solidjs/router'
 

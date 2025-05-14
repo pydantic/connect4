@@ -1,22 +1,17 @@
-import { AIModel, Board, PlayerColor, GameMode } from './game-types'
+import { Board, PlayerColor, GameMode } from './game-types'
 
 // Interface for the start game response
 interface StartGameResponse {
   gameID: string
 }
 
-/**
- * Initialize a new game with the specified game mode
- *
- * @param mode The game mode (HUMAN_VS_AI or AI_VS_AI)
- * @returns A Promise that resolves to the new game ID from the server
- */
-export async function initializeGame(mode: GameMode): Promise<string> {
-  // Convert the game mode to a format suitable for the API
-  const gameModeParam = mode === GameMode.HUMAN_VS_AI ? 'human-vs-ai' : 'ai-vs-ai'
-
+export async function initializeGame(orangeAI: string, pinkAI: string | null): Promise<string> {
+  let url = `/api/games/start?orange_ai=${orangeAI}`
+  if (pinkAI) {
+    url += `&pink_ai=${pinkAI}`
+  }
   // Make the API request
-  const response = await fetch(`/api/games/start?mode=${gameModeParam}`)
+  const response = await fetch(url)
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`)
@@ -40,12 +35,6 @@ export interface GameState {
   status: 'playing' | 'pink-win' | 'orange-win' | 'draw'
 }
 
-/**
- * Get the current state of a game
- *
- * @param gameId The unique identifier for the game
- * @returns A Promise that resolves to the game state from the server
- */
 export async function getGameState(gameId: string): Promise<GameState> {
   // Make the API request
   const response = await fetch(`/api/games/${gameId}/state`)
@@ -64,13 +53,6 @@ interface AIResponse {
   column: number
 }
 
-/**
- * Make a move in the game and get updated game state
- *
- * @param gameId The unique identifier for the game
- * @param columnIndex The column index (0-6) where the player wants to place their token
- * @returns A Promise that resolves to the updated game state from the server
- */
 export async function makeMove(gameId: string, columnIndex?: number): Promise<GameState> {
   let url = `/api/games/${gameId}/move`
   if (columnIndex !== undefined) {

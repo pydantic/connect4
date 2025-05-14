@@ -1,16 +1,18 @@
-// Game modes
-export enum GameMode {
-  HUMAN_VS_AI = 'HUMAN_VS_AI',
-  AI_VS_AI = 'AI_VS_AI',
-}
+export type GameMode = 'human-vs-ai' | 'ai-vs-ai'
 
-// AI model options
-export enum AIModel {
-  GPT_4 = 'OpenAI GPT 4o',
-  GPT_3_5 = 'OpenAI o1',
-  CLAUDE = 'Anthropic 3.7 Claude',
-  GEMINI = 'Gemini 2.5 PRO',
-}
+// should match AIModel in game.py
+export const AI_MODELS: string[] = [
+  'openai:gpt-4o',
+  'openai:gpt-4o-mini',
+  'openai:gpt-4.1',
+  'openai:gpt-4.1-mini',
+  'anthropic:claude-3-7-sonnet-latest',
+  'anthropic:claude-3-5-haiku-latest',
+  'google-vertex:gemini-2.5-pro-preview-03-25',
+  'google-vertex:gemini-2.0-flash',
+  'groq:llama-3.3-70b-versatile',
+  'groq:deepseek-r1-distill-llama-70b',
+]
 
 // Player types
 export enum PlayerType {
@@ -22,20 +24,6 @@ export enum PlayerType {
 export enum PlayerColor {
   PINK = 1,
   ORANGE = 2,
-}
-
-// Player configuration
-export interface PlayerConfig {
-  type: PlayerType
-  color: PlayerColor
-  model?: AIModel // Only needed for AI players
-}
-
-// Game configuration
-export interface GameConfig {
-  mode: GameMode
-  pinkPlayer: PlayerConfig
-  orangePlayer: PlayerConfig
 }
 
 // Board and game state types
