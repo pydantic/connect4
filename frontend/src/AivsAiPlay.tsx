@@ -1,14 +1,15 @@
 import { Component, createSignal, Show, onMount } from 'solid-js'
 import styles from './App.module.css'
 import { getGameState, makeMove, GameState } from './ai-service'
-import { GameConfig, PlayerType, PlayerColor, Board, createEmptyBoard } from './game-types'
+import { GameConfig, PlayerColor, Board, createEmptyBoard } from './game-types'
 import GameBoard from './GameBoard'
+import { A } from '@solidjs/router'
 
-interface AivsAiPlayProps {
+interface AiVsAiPlayProps {
   gameConfig: GameConfig
 }
 
-const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
+const AiVsAiPlay: Component<AiVsAiPlayProps> = (props) => {
   // Extract gameId from path - match both legacy and new paths
   const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:ai-vs-ai|game)\/([^\/]+)/)
   const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
@@ -201,6 +202,7 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
     return ''
   }
 
+
   return (
     <div class={styles.gameContainer}>
       <h1>Connect 4</h1>
@@ -218,16 +220,13 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
       </div>
 
       <div class={styles.gameControls}>
-        <a
+        <A
           href="/"
-          onClick={(e) => {
-            e.preventDefault()
-            window.navigate('/')
-          }}
+          
           class={styles.resetButton}
         >
           Return to Home
-        </a>
+        </A>
         <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>
           Refresh Game
         </button>
@@ -243,4 +242,4 @@ const AivsAiPlay: Component<AivsAiPlayProps> = (props) => {
   )
 }
 
-export default AivsAiPlay
+export default AiVsAiPlay

@@ -3,12 +3,13 @@ import styles from './App.module.css'
 import { getGameState, makeMove, GameState } from './ai-service'
 import { GameConfig, PlayerType, PlayerColor, Board, createEmptyBoard } from './game-types'
 import GameBoard, { GameBoardControls, isColumnAvailable } from './GameBoard'
+import { A } from '@solidjs/router'
 
 interface HumanAIPlayProps {
   gameConfig: GameConfig
 }
 
-const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
+const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {  
   // Extract gameId from path - match both legacy and new paths
   const gameIdMatch = window.location.pathname.match(/\/connect4\/(?:human-vs-ai|game)\/([^\/]+)/)
   const gameId = gameIdMatch ? gameIdMatch[1] : 'unknown-game'
@@ -233,6 +234,7 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
     return isColumnAvailable(board(), columnIndex)
   }
 
+
   return (
     <div class={styles.gameContainer}>
       <h1>Connect Four</h1>
@@ -250,16 +252,12 @@ const HumanAIPlay: Component<HumanAIPlayProps> = (props) => {
       <GameBoard board={board()} />
 
       <div class={styles.gameControls}>
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault()
-            window.navigate('/')
-          }}
+        <A
+          href="/"          
           class={styles.resetButton}
         >
           Return to Home
-        </a>
+        </A>
         <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>
           Refresh Game
         </button>
