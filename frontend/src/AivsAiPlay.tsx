@@ -156,6 +156,14 @@ const AiVsAiPlay: Component = () => {
     return ''
   }
 
+  const isPinkThinking = () => {
+    return currentPlayer() === PlayerColor.PINK && gameStatus() === 'playing'
+  }
+
+  const isOrangeThinking = () => {
+    return currentPlayer() === PlayerColor.ORANGE && gameStatus() === 'playing'
+  }
+
   return (
     <div class={styles.gameContainer}>
       <h1>
@@ -167,7 +175,9 @@ const AiVsAiPlay: Component = () => {
       </Show>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p class={gameStatus() === 'playing' ? styles.thinking : ''}>{renderGameStatus()}</p>
+        <p class={isPinkThinking() ? styles.pinkThinking : isOrangeThinking() ? styles.orangeThinking : ''}>
+          {renderGameStatus()}
+        </p>
       </div>
 
       <GameBoard board={board()} />
