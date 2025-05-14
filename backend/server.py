@@ -1,6 +1,7 @@
 from __future__ import annotations as _annotations
 
 import sys
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import fastapi
@@ -9,12 +10,21 @@ from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api import api_router
+from .db import DB
 
 THIS_DIR = Path(__file__).parent
 
 logfire.configure(send_to_logfire='if-token-present')
 
-app = fastapi.FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+    async with DB.connect() as db:
+        app.state.db = db
+        yield
+
+
+app = fastapi.FastAPI(lifespan=lifespan)
 logfire.instrument_fastapi(app)
 logfire.instrument_pydantic_ai()
 

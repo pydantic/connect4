@@ -4,15 +4,11 @@ import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
 import { useNavigate } from '@solidjs/router'
 
-function randomModel() {
-  return AI_MODELS[Math.floor(Math.random() * AI_MODELS.length)]
-}
-
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
   const [gameMode, setGameMode] = createSignal<GameMode>('human-vs-ai')
-  const [pinkAI, setPinkAI] = createSignal(randomModel())
-  const [orangeAI, setOrangeAI] = createSignal(randomModel())
+  const [pinkAI, setPinkAI] = createSignal('anthropic:claude-3-7-sonnet-latest')
+  const [orangeAI, setOrangeAI] = createSignal('openai:gpt-4o')
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
   const navigate = useNavigate()

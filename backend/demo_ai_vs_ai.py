@@ -9,7 +9,7 @@ async def main():
     orange_ai = 'openai:gpt-4o'
     game_state = GameState(pink_ai=pink_ai, orange_ai=orange_ai)
     while game_state.status == 'playing':
-        model = pink_ai if game_state.get_next_player() == 'X' else orange_ai
+        model = pink_ai if game_state.get_next_player() == 'pink' else orange_ai
         print(game_state.render())
         print(f'(X={pink_ai} | O={orange_ai})')
         print('---')
@@ -18,7 +18,7 @@ async def main():
         )
         column = result.output
         try:
-            game_state = game_state.handle_move(column)
+            game_state.handle_move(column)
         except ValueError as e:
             print(f'Invalid move: {e}')
             continue

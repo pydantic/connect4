@@ -158,7 +158,9 @@ const AiVsAiPlay: Component = () => {
 
   return (
     <div class={styles.gameContainer}>
-      <h1>Connect Four &mdash; AI vs AI  <span class={styles.autoplayBadge}>Autoplay</span></h1>
+      <h1>
+        Connect Four &mdash; AI vs AI <span class={styles.autoplayBadge}>Autoplay</span>
+      </h1>
 
       <Show when={isLoading()}>
         <div class={styles.loadingMessage}>Loading game...</div>

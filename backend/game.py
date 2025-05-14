@@ -58,10 +58,11 @@ class GameState(BaseModel):
         if n_pieces_in_column >= N_ROWS:
             raise PlayerError(f'Column {column} is full')
 
-    def handle_move(self, column: Column) -> GameState:
-        new_moves = self.moves + [Move(player=self.get_next_player(), column=column)]
-        new_status = _get_status(new_moves)
-        return GameState(pink_ai=self.pink_ai, orange_ai=self.orange_ai, status=new_status, moves=new_moves)
+    def handle_move(self, column: Column) -> Move:
+        new_move = Move(player=self.get_next_player(), column=column)
+        self.moves.append(new_move)
+        self.status = _get_status(self.moves)
+        return new_move
 
     def get_next_player(self) -> Player:
         return _get_next_player(self.moves)
