@@ -75,6 +75,7 @@ const PlayerSelection: Component = () => {
         <div class={styles.playerSelection}>
           <Show when={gameMode() === GameMode.AI_VS_AI}>
             <div class={styles.playerConfig}>
+              <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (AI)</h3>
               <select
                 value={pinkPlayerModel()}
@@ -88,12 +89,14 @@ const PlayerSelection: Component = () => {
 
           <Show when={gameMode() === GameMode.HUMAN_VS_AI}>
             <div class={styles.playerConfig}>
+              <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (You)</h3>
               <p>Human Player</p>
             </div>
           </Show>
 
           <div class={styles.playerConfig}>
+            <div class={`${styles.gamePiece} ${styles.orangePiece}`}></div>
             <h3>Orange Player (AI)</h3>
             <select
               value={orangePlayerModel()}
