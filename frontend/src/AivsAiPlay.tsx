@@ -164,24 +164,18 @@ const AiVsAiPlay: Component = () => {
         <div class={styles.loadingMessage}>Loading game...</div>
       </Show>
 
-      <GameBoard board={board()} />
-
-      <div class={styles.aiVsAiMessage}>Auto-playing AI vs AI game</div>
-
       <div class={`${styles.status} ${getStatusClass()}`}>
         <p class={gameStatus() === 'playing' ? styles.thinking : ''}>{renderGameStatus()}</p>
       </div>
+
+      <GameBoard board={board()} />
 
       <div class={styles.gameControls}>
         <A href="/" class={styles.resetButton}>
           Return to Home
         </A>
-        <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>
-          Refresh Game
-        </button>
       </div>
 
-      {/* Error message display */}
       <Show when={errorMessage() !== null}>
         <div class={styles.errorMessage}>
           <p>{errorMessage()}</p>

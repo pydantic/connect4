@@ -213,9 +213,6 @@ const HumanAIPlay: Component = () => {
         <A href="/" class={styles.resetButton}>
           Return to Home
         </A>
-        <button onClick={() => loadGameState()} class={styles.resetButton} style={{ 'margin-left': '10px' }}>
-          Refresh Game
-        </button>
       </div>
 
       {/* Error message display */}
