@@ -99,6 +99,7 @@ class GameUpdate:
             player=self.game_state.get_next_player(),
             column=column,
             game_id=self.game_id,
+            game_state=self.game_state,
         ):
             self.game_state.validate_move(column)
             new_move = self.game_state.handle_move(column)
