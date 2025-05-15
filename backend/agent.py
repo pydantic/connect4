@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from textwrap import dedent
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
+from pydantic_ai.models.gemini import GeminiModel
+from pydantic_ai.providers.google_vertex import GoogleVertexProvider
 
 from backend.game import FIRST_PLAYER, Column, GameState, get_player_icon
 
@@ -67,5 +69,13 @@ async def generate_next_move(game_state: GameState) -> Column:
     else:
         assert game_state.pink_ai is not None, 'Pink AI is not set'
         model = game_state.pink_ai
-    result = await connect4_agent.run('Please generate the move', deps=Connect4Deps(game_state=game_state), model=model)
+
+    if model.startswith('google-vertex:'):
+        model = GeminiModel(
+            model[len('google-vertex:') :],
+            provider=GoogleVertexProvider(service_account_file='/etc/secrets/pai-service-account.json'),
+        )
+    result = await connect4_agent.run(
+        'Please generate the next move', deps=Connect4Deps(game_state=game_state), model=model
+    )
     return result.output
