@@ -25,8 +25,9 @@ async def lifespan(app: fastapi.FastAPI):
 
 
 app = fastapi.FastAPI(lifespan=lifespan)
-logfire.instrument_fastapi(app)
+logfire.instrument_fastapi(app, capture_headers=True)
 logfire.instrument_pydantic_ai()
+logfire.instrument_asyncpg()
 
 app.include_router(api_router, prefix='/api')
 

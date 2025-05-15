@@ -96,7 +96,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "asyncpg" },
     { name = "fastapi" },
-    { name = "logfire", extra = ["fastapi"] },
+    { name = "logfire", extra = ["asyncpg", "fastapi"] },
     { name = "pydantic" },
     { name = "pydantic-ai-slim", extra = ["anthropic", "groq", "openai", "vertexai"] },
     { name = "uvicorn" },
@@ -113,7 +113,7 @@ dev = [
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "fastapi", specifier = ">=0.115.12" },
-    { name = "logfire", extras = ["fastapi"], specifier = ">=3.15.1" },
+    { name = "logfire", extras = ["asyncpg", "fastapi"], specifier = ">=3.15.1" },
     { name = "pydantic", specifier = ">=2.11.4" },
     { name = "pydantic-ai-slim", extras = ["openai", "anthropic", "groq", "vertexai"], specifier = ">=0.2.3" },
     { name = "uvicorn", specifier = ">=0.34.2" },
@@ -434,6 +434,9 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+asyncpg = [
+    { name = "opentelemetry-instrumentation-asyncpg" },
+]
 fastapi = [
     { name = "opentelemetry-instrumentation-fastapi" },
 ]
@@ -568,6 +571,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/71/19/2b773a0126ea27d1d5d29b1e134863aa7f769a3671aa1e1966633a0bc548/opentelemetry_instrumentation_asgi-0.54b0.tar.gz", hash = "sha256:4ac8d85d5cdd2bfd7329e3f763974c1761964f92f70537a77d3fe744989fc40b", size = 24231, upload-time = "2025-05-09T14:59:17.607Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a6/61/9298c94803d4dd335aa4b01e43a4dc953801ba1f48300e4bb69a44729db9/opentelemetry_instrumentation_asgi-0.54b0-py3-none-any.whl", hash = "sha256:f0147f007ce3bdc07b64c9eb18f5b2caa0e64598ed2a284ff00362fe9725233d", size = 16339, upload-time = "2025-05-09T14:58:21.868Z" },
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-asyncpg"
+version = "0.54b0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "opentelemetry-semantic-conventions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c6/75/13dc5c856c0f223c34b01c0fa76bffee8fe6287d59475d7d2ccf2748a770/opentelemetry_instrumentation_asyncpg-0.54b0.tar.gz", hash = "sha256:c14c7596813fb9eee179aac48f066dfa05d3777efae2a0c001014612f9b28c9f", size = 8718, upload-time = "2025-05-09T14:59:20.093Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/cb/ad381c0962c115fe84ef1f1c318df3c0cb448922c495f49ee478cbb01bb4/opentelemetry_instrumentation_asyncpg-0.54b0-py3-none-any.whl", hash = "sha256:f8a33b9b2d4b0470aa5591677b001abaa03183b2092b7faeed7f081c10f5266c", size = 10062, upload-time = "2025-05-09T14:58:25.061Z" },
 ]
 
 [[package]]
