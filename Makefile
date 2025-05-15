@@ -7,6 +7,7 @@
 .PHONY: install  # Install the package, dependencies, and pre-commit for local development
 install: .uv
 	uv sync --frozen
+	npm install
 
 .PHONY: format
 format: ## Format the code

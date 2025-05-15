@@ -55,9 +55,10 @@ class DB:
 
     @asynccontextmanager
     async def get_game(self, game_id: UUID) -> AsyncIterator[GameUpdate | None]:
-        async with AsyncExitStack() as stack:
+        async with AsyncExitStack() as stack, AsyncExitStack() as retrieve_game_span_stack:
             conn = await stack.enter_async_context(self._pool.acquire())
             await stack.enter_async_context(conn.transaction())
+            retrieve_game_span = retrieve_game_span_stack.enter_context(logfire.span('retrieving game from db'))
 
             r = await conn.fetchrow('select pink_ai, orange_ai, status from games where id=$1 for update', game_id)
             if not r:
@@ -67,6 +68,10 @@ class DB:
                 moves = await conn.fetch(
                     'select player, column_index as column from moves where game_id=$1 order by id', game_id
                 )
+                # Exit the retrieve_game_span context manager before yielding
+                retrieve_game_span_stack.pop_all()
+                retrieve_game_span.__exit__(None, None, None)
+
                 yield GameUpdate(
                     cast(DbConn, conn),
                     game_id,
@@ -86,11 +91,18 @@ class GameUpdate:
     game_state: GameState
 
     async def handle_move(self, column: Column):
-        new_move = self.game_state.handle_move(column)
-        await self._conn.execute('update games set status=$1 where id=$2', self.game_state.status, self.game_id)
-        await self._conn.execute(
-            'insert into moves (game_id, player, column_index) values ($1, $2, $3)',
-            self.game_id,
-            new_move.player,
-            new_move.column,
-        )
+        with logfire.span(
+            'handling move {player=} {column=}',
+            game_id=self.game_id,
+            player=self.game_state.get_next_player(),
+            column=column,
+        ):
+            self.game_state.validate_move(column)
+            new_move = self.game_state.handle_move(column)
+            await self._conn.execute('update games set status=$1 where id=$2', self.game_state.status, self.game_id)
+            await self._conn.execute(
+                'insert into moves (game_id, player, column_index) values ($1, $2, $3)',
+                self.game_id,
+                new_move.player,
+                new_move.column,
+            )

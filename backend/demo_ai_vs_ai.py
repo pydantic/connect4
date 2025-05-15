@@ -8,6 +8,7 @@ from backend.game import GameState
 logfire.configure()
 logfire.instrument_pydantic_ai()
 
+
 async def main():
     pink_ai = 'openai:gpt-4o'
     orange_ai = 'openai:gpt-4o'

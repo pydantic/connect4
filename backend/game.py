@@ -3,14 +3,8 @@ from __future__ import annotations
 from typing import Annotated, Literal
 
 from annotated_types import Ge, Le
+from fastapi import HTTPException
 from pydantic import BaseModel, Field
-
-
-class PlayerError(ValueError):
-    """
-    A custom error class used for invalid moves to help the agent retry.
-    """
-
 
 type GameStatus = Literal['playing', 'pink-win', 'orange-win', 'draw']
 type Player = Literal['pink', 'orange']
@@ -56,7 +50,7 @@ class GameState(BaseModel):
         """
         n_pieces_in_column = len([m for m in self.moves if m.column == column])
         if n_pieces_in_column >= N_ROWS:
-            raise PlayerError(f'Column {column} is full')
+            raise HTTPException(status_code=400, detail=f'Column {column} is full')
 
     def handle_move(self, column: Column) -> Move:
         new_move = Move(player=self.get_next_player(), column=column)
