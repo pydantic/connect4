@@ -10,8 +10,8 @@ import { A } from '@solidjs/router'
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
   const [gameMode, setGameMode] = createSignal<GameMode>('human-vs-ai')
-  const [pinkAI, setPinkAI] = createSignal('anthropic:claude-3-7-sonnet-latest')
-  const [orangeAI, setOrangeAI] = createSignal('openai:gpt-4o')
+  const [pinkAI, setPinkAI] = createSignal('Anthropic claude-3-7-sonnet-latest')
+  const [orangeAI, setOrangeAI] = createSignal('OpenAI gpt-4o')
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
   const navigate = useNavigate()

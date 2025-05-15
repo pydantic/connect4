@@ -2,16 +2,16 @@ export type GameMode = 'human-vs-ai' | 'ai-vs-ai'
 
 // should match AIModel in game.py
 export const AI_MODELS: string[] = [
-  'openai:gpt-4o',
-  'openai:gpt-4o-mini',
-  'openai:gpt-4.1',
-  'openai:gpt-4.1-mini',
-  'anthropic:claude-3-7-sonnet-latest',
-  'anthropic:claude-3-5-haiku-latest',
-  'google-vertex:gemini-2.5-pro-preview-03-25',
-  'google-vertex:gemini-2.0-flash',
-  'groq:llama-3.3-70b-versatile',
-  'groq:deepseek-r1-distill-llama-70b',
+  'OpenAI gpt-4o',
+  'OpenAI gpt-4o-mini',
+  'OpenAI gpt-4.1',
+  'OpenAI gpt-4.1-mini',
+  'Anthropic claude-3-7-sonnet-latest',
+  'Anthropic claude-3-5-haiku-latest',
+  'Google-vertex gemini-2.5-pro-preview-03-25',
+  'Google-vertex gemini-2.0-flash',
+  'Groq llama-3.3-70b-versatile',
+  'Groq deepseek-r1-distill-llama-70b',
 ]
 
 // Player types
