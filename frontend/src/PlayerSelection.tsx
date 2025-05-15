@@ -97,7 +97,7 @@ const PlayerSelection: Component = () => {
 
         <div class={styles.playerConfig}>
           <p>
-            See the source code on github{' '}
+            See the source code on GitHub{' '}
             <A href="https://github.com/pydantic/connect4" class={appStyles.link} target="_blank"> 
               github.com/pydantic/connect4
             </A>
