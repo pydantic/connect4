@@ -14,7 +14,7 @@ from .db import DB
 
 THIS_DIR = Path(__file__).parent
 
-logfire.configure(send_to_logfire='if-token-present')
+logfire.configure()
 
 
 @asynccontextmanager

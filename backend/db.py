@@ -10,6 +10,7 @@ from uuid import UUID
 
 import asyncpg
 import fastapi
+import logfire
 
 from .game import Column, GameState
 
@@ -30,15 +31,16 @@ class DB:
     @staticmethod
     async def connect() -> AsyncIterator[DB]:
         dsn = os.getenv('DATABASE_URL') or 'postgresql://postgres@localhost:5432'
-        pool = await asyncpg.create_pool(dsn)
-        schema_path = Path(__file__).parent / 'schema.sql'
-        async with pool.acquire() as conn:
-            await conn.execute(schema_path.read_text())
+        with logfire.span('db connect', dsn=dsn):
+            pool = await asyncpg.create_pool(dsn)
+            schema_path = Path(__file__).parent / 'schema.sql'
+            async with pool.acquire() as conn:
+                await conn.execute(schema_path.read_text())
 
-        try:
-            yield DB(pool)
-        finally:
-            await pool.close()
+            try:
+                yield DB(pool)
+            finally:
+                await pool.close()
 
     @staticmethod
     async def get_dep(request: fastapi.Request) -> DB:
