@@ -187,8 +187,8 @@ const AiVsAiPlay: Component = () => {
           <p>{PinkAI()}</p>
         </section>
         <section class={styles.player}>
-          <p>{OrangeAI()}</p>
           <div classList={{ [styles.gamePiece]: true, [styles.player2]: true }} />
+          <p>{OrangeAI()}</p>          
         </section>
       </section>
       <div class={styles.gameControls}>
