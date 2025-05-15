@@ -128,9 +128,9 @@ const AiVsAiPlay: Component = () => {
     const status = gameStatus()
 
     if (status === 'pink-win') {
-      return `Pink (AI - ${PinkAI()}) wins!`
+      return `Pink wins! (AI - ${PinkAI()}) 🎉`
     } else if (status === 'orange-win') {
-      return `Orange (AI - ${OrangeAI()}) wins!`
+      return `Orange wins! (AI - ${OrangeAI()}) 🎉`
     } else if (status === 'draw') {
       return 'Game ended in a draw!'
     } else {
