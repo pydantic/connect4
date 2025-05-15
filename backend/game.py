@@ -77,11 +77,13 @@ class GameState(BaseModel):
             return f'{board}\nResult: {status_message}'
 
     def render_board(self) -> str:
-        return _render_board(self.board)
+        # -------- header line with column indices -------------------------
+        header = 'Columns:\n' + ' '.join(str(idx) for idx in range(1, N_COLUMNS + 1))
+        return header + '\n' + self.board
 
     @computed_field
     @property
-    def board(self) -> list[list[str]]:
+    def board(self) -> str:
         columns: list[list[Player]] = [[] for _ in range(N_COLUMNS)]
         for move in self.moves:
             columns[move.column - 1].append(move.player)
@@ -95,14 +97,8 @@ class GameState(BaseModel):
                 cells.append(player)
             rows.append(cells)
 
-        return rows[::-1]
+        return '\n'.join(' '.join(row) for row in rows)
 
-
-def _render_board(rows: list[list[str]]) -> str:
-    """Render the current game state as a string."""
-    # -------- header line with column indices -------------------------
-    header = 'Columns:\n' + ' '.join(str(idx) for idx in range(1, N_COLUMNS + 1))
-    return header + '\n' + '\n'.join(' '.join(row) for row in rows)
 
 
 def _get_status(moves: list[Move]) -> GameStatus:
