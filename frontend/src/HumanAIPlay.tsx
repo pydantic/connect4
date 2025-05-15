@@ -198,7 +198,7 @@ const HumanAIPlay: Component = () => {
       <h1>Connect Four &mdash; Human vs AI</h1>
 
       <div class={`${styles.status} ${getStatusClass()}`}>
-        <p class={isAIThinking() ? styles.thinking : ''}>{renderGameStatus()}</p>
+        <p class={isAIThinking() ? styles.orangeThinking : ''}>{renderGameStatus()}</p>
       </div>
 
       <Show when={isLoading()}>
