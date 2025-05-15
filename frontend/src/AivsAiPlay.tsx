@@ -181,7 +181,16 @@ const AiVsAiPlay: Component = () => {
       </div>
 
       <GameBoard board={board()} />
-
+      <section class={styles.playerInfo}>
+        <section class={styles.player}>
+          <div classList={{ [styles.gamePiece]: true, [styles.player1]: true }} />
+          <p>{PinkAI()}</p>
+        </section>
+        <section class={styles.player}>
+          <p>{OrangeAI()}</p>
+          <div classList={{ [styles.gamePiece]: true, [styles.player2]: true }} />
+        </section>
+      </section>
       <div class={styles.gameControls}>
         <A href="/" class={styles.resetButton}>
           Return to Home
