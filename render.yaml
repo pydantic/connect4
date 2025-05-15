@@ -16,4 +16,4 @@ services:
 
 databases:
   - name: postgres
-    plan: starter
+    plan: basic-1gb
