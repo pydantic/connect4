@@ -97,7 +97,7 @@ class GameState(BaseModel):
                 cells.append(player)
             rows.append(cells)
 
-        return '\n'.join(' '.join(row) for row in rows)
+        return '\n'.join(' '.join(row) for row in rows[::-1])
 
 
 
