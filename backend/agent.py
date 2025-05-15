@@ -69,9 +69,9 @@ async def generate_next_move(game_state: GameState) -> Column:
         assert game_state.pink_ai is not None, 'Pink AI is not set'
         model = game_state.pink_ai
 
-    if model.startswith('google-vertex:'):
+    if model.startswith('Google-vertex'):
         model = GeminiModel(
-            model[len('google-vertex:') :],
+            model[len('Google-vertex'):],
             provider=GoogleVertexProvider(service_account_file='/etc/secrets/pai-service-account.json'),
         )
     result = await connect4_agent.run(
