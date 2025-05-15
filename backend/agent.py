@@ -29,7 +29,7 @@ def validate_move(ctx: RunContext[Connect4Deps], column: Column) -> Column:
     return column
 
 
-@connect4_agent.instructions
+@connect4_agent.system_prompt
 def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
     player = ctx.deps.game_state.get_next_player()
 

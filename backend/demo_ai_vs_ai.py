@@ -1,22 +1,22 @@
 import asyncio
 
-from backend.agent import Connect4Deps, connect4_agent
+import logfire
+
+from backend.agent import generate_next_move
 from backend.game import GameState
 
+logfire.configure()
+logfire.instrument_pydantic_ai()
 
 async def main():
     pink_ai = 'openai:gpt-4o'
     orange_ai = 'openai:gpt-4o'
     game_state = GameState(pink_ai=pink_ai, orange_ai=orange_ai)
     while game_state.status == 'playing':
-        model = pink_ai if game_state.get_next_player() == 'pink' else orange_ai
         print(game_state.render())
         print(f'(X={pink_ai} | O={orange_ai})')
         print('---')
-        result = await connect4_agent.run(
-            'Please generate the move', deps=Connect4Deps(game_state=game_state), model=model
-        )
-        column = result.output
+        column = await generate_next_move(game_state)
         try:
             game_state.handle_move(column)
         except ValueError as e:
