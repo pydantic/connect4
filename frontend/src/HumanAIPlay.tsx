@@ -159,9 +159,9 @@ const HumanAIPlay: Component = () => {
     const status = gameStatus()
 
     if (status === 'pink-win') {
-      return 'Pink (You) wins!'
+      return 'You win! (Pink) 🎉'
     } else if (status === 'orange-win') {
-      return `Orange (AI - ${OrangeAI()}) wins!`
+      return `Orange AI wins! (${OrangeAI()}) 🎉`
     } else if (status === 'draw') {
       return 'Game ended in a draw!'
     } else {
