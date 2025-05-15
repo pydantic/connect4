@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 
 from annotated_types import Ge, Le
 from fastapi import HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 type GameStatus = Literal['playing', 'pink-win', 'orange-win', 'draw']
 type Player = Literal['pink', 'orange']
@@ -63,7 +63,7 @@ class GameState(BaseModel):
 
     def render(self) -> str:
         """Render the current game state as a string."""
-        board = _render_board(self.moves)
+        board = self.render_board()
         if self.status == 'playing':
             next_player = _get_next_player(self.moves)
             return f'{board}\nNext player: {get_player_icon(next_player)}'
@@ -77,29 +77,32 @@ class GameState(BaseModel):
             return f'{board}\nResult: {status_message}'
 
     def render_board(self) -> str:
-        return _render_board(self.moves)
+        return _render_board(self.board)
+
+    @computed_field
+    @property
+    def board(self) -> list[list[str]]:
+        columns: list[list[Player]] = [[] for _ in range(N_COLUMNS)]
+        for move in self.moves:
+            columns[move.column - 1].append(move.player)
+
+        rows: list[list[str]] = []
+        for r in range(N_ROWS):
+            cells: list[str] = []
+            for c in range(N_COLUMNS):
+                column = columns[c]
+                player = get_player_icon(column[r]) if r < len(column) else '.'
+                cells.append(player)
+            rows.append(cells)
+
+        return rows[::-1]
 
 
-def _render_board(moves: list[Move]) -> str:
+def _render_board(rows: list[list[str]]) -> str:
     """Render the current game state as a string."""
     # -------- header line with column indices -------------------------
     header = 'Columns:\n' + ' '.join(str(idx) for idx in range(1, N_COLUMNS + 1))
-
-    # -------- grid rows, top (row 5) to bottom (row 0) ---------------
-    columns: list[list[Player]] = [[] for _ in range(N_COLUMNS)]
-    for move in moves:
-        columns[move.column - 1].append(move.player)
-
-    rows: list[str] = []
-    for r in range(N_ROWS):
-        cells: list[str] = []
-        for c in range(N_COLUMNS):
-            column = columns[c]
-            player = get_player_icon(column[r]) if r < len(column) else '.'
-            cells.append(player)
-        rows.append(' '.join(cells))
-
-    return header + '\n' + '\n'.join(rows[::-1])
+    return header + '\n' + '\n'.join(' '.join(row) for row in rows)
 
 
 def _get_status(moves: list[Move]) -> GameStatus:
