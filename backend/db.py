@@ -37,9 +37,10 @@ class DB:
             async with pool.acquire() as conn:
                 await conn.execute(schema_path.read_text())
 
-            try:
-                yield DB(pool)
-            finally:
+        try:
+            yield DB(pool)
+        finally:
+            with logfire.span('db close', dsn=dsn):
                 await pool.close()
 
     @staticmethod
