@@ -13,9 +13,9 @@ services:
         sync: false
       - key: DATABASE_URL
         fromDatabase:
-          name: postgres
+          name: connect4-postgres
           property: connectionString
 
 databases:
-  - name: postgres
+  - name: connect4-postgres
     plan: basic-1gb
