@@ -165,7 +165,7 @@ const HumanAIPlay: Component = () => {
     } else if (status === 'draw') {
       return 'Game ended in a draw!'
     } else {
-      return 'Current Player: Pink (You)'
+      return 'Your turn (Pink player)'
     }
   }
 
