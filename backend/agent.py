@@ -38,28 +38,30 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
     opponent_icon = get_player_icon('pink' if player == 'orange' else 'orange')
     first_player_icon = get_player_icon(FIRST_PLAYER)
 
-    strategy_header = dedent(
+    return dedent(
         f"""\
         You are an expert Connect Four strategist playing as **{player_icon}**
         (opponent is **{opponent_icon}**; {first_player_icon} is the first player).
 
         Apply these principles to choose the optimal move for the next turn:
-        • Control the center columns to maximize future connections.
-        • Take any immediate win, or block the opponent's immediate win.
-        • Set up double‑threat "forks" (two winning lines at once) whenever possible.
-        • Plan vertical, horizontal, and diagonal wins; track odd/even‑row parity
+
+        - Control the center columns to maximize future connections.
+        - Take any immediate win, or block the opponent's immediate win.
+        - Set up double‑threat "forks" (two winning lines at once) whenever possible.
+        - Plan vertical, horizontal, and diagonal wins; track odd/even‑row parity
           (first player prefers odd‑row wins, second player even‑row wins).
-        • Never play a move that lets the opponent win on their next turn.
+        - Never play a move that lets the opponent win on their next turn.
 
         Analyze the board and use the `move` tool to respond with the column number (1‑7) of your best move.
         If you are a thinking model, don't think for too long — we want to play fast!
 
         Board state:
+
+        ```
+        {ctx.deps.game_state.render_board()}
+        ```
         """
     )
-
-    board_state = ctx.deps.game_state.render_board()
-    return strategy_header + board_state
 
 
 async def generate_next_move(game_state: GameState) -> Column:
