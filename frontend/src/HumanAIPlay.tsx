@@ -222,7 +222,7 @@ const HumanAIPlay: Component = () => {
 
       <div class={styles.gameControls}>
         <A href="/" class={styles.resetButton}>
-          Return to Home
+          Return Home
         </A>
       </div>
 

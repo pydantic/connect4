@@ -145,8 +145,12 @@ const AiVsAiPlay: Component = () => {
   const getStatusClass = () => {
     const status = gameStatus()
 
-    if (status === 'pink-win' || status === 'orange-win') {
-      return styles.winnerMessage
+    if (status === 'pink-win') {
+      return styles.winnerMessagePink
+    }
+
+    if (status === 'orange-win') {
+      return styles.winnerMessageOrange
     }
 
     if (status === 'draw') {
@@ -193,7 +197,7 @@ const AiVsAiPlay: Component = () => {
       </section>
       <div class={styles.gameControls}>
         <A href="/" class={styles.resetButton}>
-          Return to Home
+          Return Home
         </A>
       </div>
 

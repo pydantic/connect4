@@ -250,7 +250,6 @@ select {
 .errorMessage {
   background-color: #fee2e2;
   color: #b91c1c;
-  border-left: 4px solid #ef4444;
   margin-top: 1rem;
   padding: 0.75rem;
   border-radius: 8px;
