@@ -70,7 +70,7 @@ class DB:
             left join moves on games.id = moves.game_id
             where games.id=$1
             group by pink_ai, orange_ai, status
-        """,
+            """,
             game_id,
         )
         if not row:
