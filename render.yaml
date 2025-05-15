@@ -4,6 +4,8 @@ services:
     runtime: docker
     rootDir: .
     dockerfilePath: ./Dockerfile
+    domains:
+      - logfire.run
     envVars:
       - key: OPENAI_API_KEY
         sync: false
