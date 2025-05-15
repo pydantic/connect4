@@ -1,5 +1,6 @@
 from __future__ import annotations as _annotations
 
+import os
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -14,7 +15,7 @@ from .db import DB
 
 THIS_DIR = Path(__file__).parent
 
-logfire.configure()
+logfire.configure(environment='prod' if 'RENDER' in os.environ else 'dev')
 
 
 @asynccontextmanager
