@@ -23,6 +23,18 @@ button {
   cursor: pointer;
 }
 
+a.link {
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px #9bfcda solid;
+  transition: 200ms all ease;
+}
+
+a.link:hover {
+  color: #9bfcda;
+  border-bottom: none;
+}
+
 .board {
   display: flex;
   flex-direction: column;

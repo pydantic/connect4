@@ -240,6 +240,7 @@ select {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-bottom: 20px;
 }
 
 .startButton:hover {

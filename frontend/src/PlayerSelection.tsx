@@ -2,8 +2,10 @@ import { Component, createSignal, Show, For, onMount } from 'solid-js'
 import { GameMode, AI_MODELS, PlayerType, PlayerColor } from './game-types'
 import { initializeGame } from './ai-service'
 import styles from './PlayerSelection.module.css'
+import appStyles from './App.module.css'
 import { useNavigate } from '@solidjs/router'
 import { Select } from './components/select'
+import { A } from '@solidjs/router'
 
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
@@ -92,6 +94,15 @@ const PlayerSelection: Component = () => {
         <button class={styles.startButton} onClick={startGame} disabled={isStartingGame()}>
           {isStartingGame() ? 'Starting Game...' : 'Start Game'}
         </button>
+
+        <div class={styles.playerConfig}>
+          <p>
+            See the source code on github{' '}
+            <A href="https://github.com/pydantic/connect4" class={appStyles.link} target="_blank"> 
+              github.com/pydantic/connect4
+            </A>
+          </p>
+        </div>
 
         {/* Error message display */}
         <Show when={errorMessage() !== null}>
