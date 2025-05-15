@@ -42,7 +42,6 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
 
     Always returns the updated game state.
     """
-    logfire.info(f'Handling move for {game_id=} {column=}')
     async with db.get_game(game_id) as g:
         if not g:
             raise HTTPException(status_code=404, detail='game not found')
@@ -61,6 +60,7 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
             assert g
             await g.handle_move(ai_column)
         game_state = g.game_state
+    logfire.info('Game status: {game_state.status}', game_id=game_id, game_state=game_state)
     return game_state
 
 

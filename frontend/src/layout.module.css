@@ -1,32 +1,31 @@
 .layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
 }
 
-.footer{ 
-    margin-top: auto;
-    
+.footer {
+  margin-top: auto;
 }
 
 .footer span {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;    
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .footer a {
-    text-decoration: none;
-    display: flex;    
-    color: #fff;    
-    padding: 2.5rem;
-    justify-content: center;
-    align-items: center;
-    gap: 0.8rem;
+  text-decoration: none;
+  display: flex;
+  color: #fff;
+  padding: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .footer svg {
-    width: 2rem;
-    height: 2rem;
+  width: 2rem;
+  height: 2rem;
 }

@@ -55,10 +55,13 @@ class DB:
 
     @asynccontextmanager
     async def get_game(self, game_id: UUID) -> AsyncIterator[GameUpdate | None]:
-        async with AsyncExitStack() as stack, AsyncExitStack() as retrieve_game_span_stack:
-            conn = await stack.enter_async_context(self._pool.acquire())
-            await stack.enter_async_context(conn.transaction())
-            retrieve_game_span = retrieve_game_span_stack.enter_context(logfire.span('retrieving game from db'))
+        async with AsyncExitStack() as retrieve_game_span_stack, AsyncExitStack() as db_stack:
+            retrieve_game_span = retrieve_game_span_stack.enter_context(
+                logfire.span('Retrieving game from db ({game_id=})', game_id=game_id)
+            )
+
+            conn = await db_stack.enter_async_context(self._pool.acquire())
+            await db_stack.enter_async_context(conn.transaction())
 
             r = await conn.fetchrow('select pink_ai, orange_ai, status from games where id=$1 for update', game_id)
             if not r:
@@ -92,10 +95,10 @@ class GameUpdate:
 
     async def handle_move(self, column: Column):
         with logfire.span(
-            'handling move {player=} {column=}',
-            game_id=self.game_id,
+            'Updating game for move {player=} {column=}',
             player=self.game_state.get_next_player(),
             column=column,
+            game_id=self.game_id,
         ):
             self.game_state.validate_move(column)
             new_move = self.game_state.handle_move(column)
