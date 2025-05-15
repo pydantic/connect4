@@ -69,7 +69,7 @@ async def generate_next_move(game_state: GameState) -> Column:
         assert game_state.pink_ai is not None, 'Pink AI is not set'
         model = game_state.pink_ai
 
-    # Convert the display name format back to the provider:model format expected by the library
+    # Convert the display name format back to the provider:model format expected by PydanticAI
     model_for_library = model
     if model.startswith('OpenAI '):
         model_for_library = 'openai:' + model[len('OpenAI '):]
