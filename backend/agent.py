@@ -40,7 +40,7 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
 
     strategy_header = dedent(
         f"""\
-        You are an expert Connect 4 strategist playing as **{player_icon}**
+        You are an expert Connect Four strategist playing as **{player_icon}**
         (opponent is **{opponent_icon}**; {first_player_icon} is the first player).
 
         Apply these principles to choose the optimal move for the next turn:

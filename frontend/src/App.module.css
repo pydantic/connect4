@@ -423,7 +423,7 @@ button {
   mix-blend-mode: soft-light;
 }
 
-/* Add rim texture to make it look more like real Connect 4 piece */
+/* Add rim texture to make it look more like real Connect Four piece */
 .gamePiece::before {
   content: '';
   position: absolute;

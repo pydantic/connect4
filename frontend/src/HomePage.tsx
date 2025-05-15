@@ -5,10 +5,10 @@ import { A } from '@solidjs/router'
 const HomePage: Component = () => {
   return (
     <div class={styles.homeContainer}>
-      <h1>Connect 4</h1>
+      <h1>Connect Four</h1>
       <div class={styles.buttonContainer}>
         <A href="/connect4" class={styles.button}>
-          Play the game - Connect 4
+          Play the game - Connect Four
         </A>
         <A
           href="https://logfire-us.pydantic.dev/l/join-samuelcolvin/VKJ1XdXRvo"
