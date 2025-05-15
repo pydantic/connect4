@@ -216,7 +216,7 @@ const HumanAIPlay: Component = () => {
         </section>
         <section class={styles.player}>
           <div classList={{ [styles.gamePiece]: true, [styles.player2]: true }} />
-          <p>{OrangeAI()}</p>        
+          <p>{OrangeAI()}</p>
         </section>
       </section>
 
