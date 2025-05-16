@@ -26,11 +26,10 @@ async def start_game(
 
 @api_router.get('/games/{game_id:uuid}/state')
 async def get_game_state(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4) -> GameState:
-    async with db.get_game(game_id) as g:
-        if g:
-            return g.game_state
-        else:
-            raise HTTPException(status_code=404, detail='game not found')
+    if game_state := await db.get_game(game_id):
+        return game_state
+    else:
+        raise HTTPException(status_code=404, detail='game not found')
 
 
 @api_router.post('/games/{game_id}/move')
@@ -42,25 +41,25 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
 
     Always returns the updated game state.
     """
-    async with db.get_game(game_id) as g:
-        if not g:
-            raise HTTPException(status_code=404, detail='game not found')
-        elif g.game_state.pink_ai and column is not None:
-            raise HTTPException(status_code=400, detail='column may not be provided for ai-vs-ai')
-        elif g.game_state.pink_ai is None and column is None:
-            raise HTTPException(status_code=400, detail='column must be provided for human-vs-ai')
+    logfire.info(f'Handling move for {game_id=} {column=}')
+    game_state = await db.get_game(game_id)
+    if not game_state:
+        raise HTTPException(status_code=404, detail='game not found')
+    elif game_state.pink_ai and column is not None:
+        raise HTTPException(status_code=400, detail='column may not be provided for ai-vs-ai')
+    elif game_state.pink_ai is None and column is None:
+        raise HTTPException(status_code=400, detail='column must be provided for human-vs-ai')
 
-        if column is not None:
-            await g.handle_move(column)
-        game_state = g.game_state
+    if column is not None:
+        await db.handle_move(game_id, game_state, column)
 
-    if game_state.status == 'playing':
-        ai_column = await generate_next_move(g.game_state)
-        async with db.get_game(game_id) as g:
-            assert g
-            await g.handle_move(ai_column)
-        game_state = g.game_state
     logfire.info('Game status: {game_state.status}', game_id=game_id, game_state=game_state)
+    if game_state.status == 'playing':
+        ai_column = await generate_next_move(game_state)
+        # change there's been no more moves before applying this move
+        new_move_count = await db.get_move_count(game_id)
+        if new_move_count == len(game_state.moves):
+            await db.handle_move(game_id, game_state, ai_column)
     return game_state
 
 
