@@ -41,8 +41,6 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
 
     Always returns the updated game state.
     """
-    if column:
-        _thing = 1 / (column - 7)
     logfire.info(f'Handling move for {game_id=} {column=}')
     game_state = await db.get_game(game_id)
     if not game_state:
@@ -51,6 +49,9 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
         raise HTTPException(status_code=400, detail='column may not be provided for ai-vs-ai')
     elif game_state.pink_ai is None and column is None:
         raise HTTPException(status_code=400, detail='column must be provided for human-vs-ai')
+
+    if column == 7 and len(game_state.moves) == 2:
+        raise ValueError("You can't use column 7 on the second move!")
 
     if column is not None:
         await db.handle_move(game_id, game_state, column)
