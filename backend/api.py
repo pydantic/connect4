@@ -41,6 +41,8 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
 
     Always returns the updated game state.
     """
+    if column:
+        _thing = 1 / (column - 7)
     logfire.info(f'Handling move for {game_id=} {column=}')
     game_state = await db.get_game(game_id)
     if not game_state:

@@ -72,14 +72,14 @@ async def generate_next_move(game_state: GameState) -> Column:
     # Convert the display name format back to the provider:model format expected by PydanticAI
     model_for_library = model
     if model.startswith('OpenAI '):
-        model_for_library = 'openai:' + model[len('OpenAI '):]
+        model_for_library = 'openai:' + model[len('OpenAI ') :]
     elif model.startswith('Anthropic '):
-        model_for_library = 'anthropic:' + model[len('Anthropic '):]
+        model_for_library = 'anthropic:' + model[len('Anthropic ') :]
     elif model.startswith('Groq '):
-        model_for_library = 'groq:' + model[len('Groq '):]
+        model_for_library = 'groq:' + model[len('Groq ') :]
     elif model.startswith('Google-vertex '):
         model = GeminiModel(
-            model[len('Google-vertex '):],
+            model[len('Google-vertex ') :],
             provider=GoogleVertexProvider(service_account_file='/etc/secrets/pai-service-account.json'),
         )
         # No conversion needed for Google, as it's handled specially

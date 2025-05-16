@@ -100,7 +100,6 @@ class GameState(BaseModel):
         return '\n'.join(' '.join(row) for row in rows[::-1])
 
 
-
 def _get_status(moves: list[Move]) -> GameStatus:
     # Only check from the last move position for efficiency
     columns: list[list[Player | None]] = [[] for _ in range(N_COLUMNS)]
