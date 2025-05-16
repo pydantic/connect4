@@ -15,7 +15,11 @@ from .db import DB
 
 THIS_DIR = Path(__file__).parent
 
-logfire.configure(environment='prod' if 'RENDER' in os.environ else 'dev')
+logfire.configure(
+    environment='prod' if 'RENDER' in os.environ else 'dev',
+    service_name=os.getenv('RENDER_SERVICE_NAME'),
+    service_version=os.getenv('RENDER_GIT_COMMIT'),
+)
 
 
 @asynccontextmanager
