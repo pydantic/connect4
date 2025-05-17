@@ -15,10 +15,19 @@ from .db import DB
 
 THIS_DIR = Path(__file__).parent
 
+code_source = None
+opt_commit = os.getenv('RENDER_GIT_COMMIT')
+if commit := opt_commit:
+    code_source = logfire.CodeSource(
+        repository='https://github.com/pydantic/connect4',
+        revision=commit,
+    )
+
 logfire.configure(
     environment='prod' if 'RENDER' in os.environ else 'dev',
     service_name=os.getenv('RENDER_SERVICE_NAME'),
-    service_version=os.getenv('RENDER_GIT_COMMIT'),
+    service_version=opt_commit,
+    code_source=code_source,
 )
 
 
