@@ -41,14 +41,11 @@ const PlayerSelection: Component = () => {
   }
 
   return (
-    <div class={styles.container}>
+    <div class={styles.homeContainer}>
       <h1>Connect Four</h1>
-
       <div class={styles.selectionCard}>
-        <h2>Game Setup</h2>
-
         <div class={styles.modeSelection}>
-          <h3>Choose Game Mode</h3>
+          <h2>Choose Game Mode</h2>
           <div class={styles.tabs}>
             <button
               class={gameMode() === 'human-vs-ai' ? styles.activeTab : styles.tab}

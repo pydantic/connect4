@@ -3,10 +3,25 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  color: white;
+  position: relative;
+  z-index: 10;
+}
+
+.content {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  width: 100%;  
 }
 
 .footer {
-  margin-top: auto;
+  padding: 1rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .footer span {
@@ -19,7 +34,6 @@
   text-decoration: none;
   display: flex;
   color: #fff;
-  padding: 2.5rem;
   justify-content: center;
   align-items: center;
   gap: 0.8rem;
@@ -28,4 +42,11 @@
 .footer svg {
   width: 2rem;
   height: 2rem;
+}
+
+/* For pages that are taller than viewport */
+@media (min-height: 100vh) {
+  .layout {
+    height: auto;
+  }
 }

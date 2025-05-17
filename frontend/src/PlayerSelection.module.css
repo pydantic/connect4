@@ -12,6 +12,19 @@ body {
   margin: 0 auto;
 }
 
+.homeContainer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: white;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+ 
+
 h1 {
   color: #fff;
   margin-bottom: 2rem;
@@ -23,6 +36,7 @@ h1 {
   padding: 2rem;
   width: 100%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
 }
 
 h2 {
