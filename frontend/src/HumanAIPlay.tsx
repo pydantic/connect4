@@ -133,10 +133,9 @@ const HumanAIPlay: Component = () => {
       return true // Move was successful
     } catch (error) {
       console.error('Error making move:', error)
-      setErrorMessage(`Failed to make move: ${error instanceof Error ? error.message : 'Unknown error'}`)
-
-      // If the API call failed, we need to revert our local change
       loadGameState()
+
+      setErrorMessage(`Failed to make move: ${error instanceof Error ? error.message : 'Unknown error'}`)
       return false
     } finally {
       setIsAIThinking(false)
