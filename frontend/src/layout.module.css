@@ -4,14 +4,15 @@
   min-height: 100vh;
   width: 100%;
   color: white;
+  position: relative;
+  z-index: 10;
 }
 
 .content {
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
-  width: 100%;
-  z-index: 10;
+  width: 100%;  
 }
 
 .footer {
