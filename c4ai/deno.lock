@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:@kenrick95/c4@5.1.0": "5.1.0",
+    "npm:@kenrick95/c4@^5.1.1": "5.1.1",
     "npm:logfire@~0.5.1": "0.5.1_@opentelemetry+api@1.9.0_@opentelemetry+auto-instrumentations-node@0.57.1__@opentelemetry+api@1.9.0__@opentelemetry+core@2.0.1___@opentelemetry+api@1.9.0_@opentelemetry+context-async-hooks@2.0.1__@opentelemetry+api@1.9.0_@opentelemetry+core@2.0.1__@opentelemetry+api@1.9.0_@opentelemetry+exporter-metrics-otlp-proto@0.200.0__@opentelemetry+api@1.9.0_@opentelemetry+exporter-trace-otlp-proto@0.200.0__@opentelemetry+api@1.9.0_@opentelemetry+resources@2.0.1__@opentelemetry+api@1.9.0_@opentelemetry+sdk-metrics@2.0.1__@opentelemetry+api@1.9.0_@opentelemetry+sdk-node@0.200.0__@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@2.0.1__@opentelemetry+api@1.9.0",
     "npm:zod@^3.25.20": "3.25.20"
   },
@@ -26,8 +26,8 @@
     "@js-sdsl/ordered-map@4.4.2": {
       "integrity": "sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw=="
     },
-    "@kenrick95/c4@5.1.0": {
-      "integrity": "sha512-9Hes727p2KEPfDzuqHf549vyjHRCLbREmEllWf9LMWLECDNL51lX0BLQ0MvOJ0d2oBP5oOp4w/NNu5U9TQ5VNQ=="
+    "@kenrick95/c4@5.1.1": {
+      "integrity": "sha512-seO1YCopa2WMO6hOIaX8rUlq/Yq3fr9xR+5Y35xVp7GYHpwm8n8OtQ3IBsftYtHUBeOL1rwQ7cAWoq/3YfvtXw=="
     },
     "@opentelemetry/api-logs@0.200.0": {
       "integrity": "sha512-IKJBQxh91qJ+3ssRly5hYEJ8NDHu9oY/B1PXVSCWf7zytmYO9RNLB0Ox9XQ/fJ8m6gY6Q6NtBWlmXfaXt5Uc4Q==",
@@ -1206,7 +1206,7 @@
   },
   "workspace": {
     "dependencies": [
-      "npm:@kenrick95/c4@5.1.0",
+      "npm:@kenrick95/c4@^5.1.1",
       "npm:logfire@~0.5.1",
       "npm:zod@^3.25.20"
     ]
