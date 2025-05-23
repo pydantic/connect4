@@ -3,7 +3,7 @@
 import os
 import random
 import re
-from typing import Any, Literal
+from typing import Literal
 
 import logfire
 from pydantic import BaseModel, TypeAdapter, model_validator
@@ -22,7 +22,7 @@ class Move(BaseModel):
 
     @model_validator(mode='before')
     @classmethod
-    def validate_column(cls, value: Any) -> Any:
+    def validate_column(cls, value: str | dict[str, str | int]) -> dict[str, str | int]:
         if isinstance(value, str):
             player, column = value.strip().split(',', 1)
             return {'column': column, 'player': player}
