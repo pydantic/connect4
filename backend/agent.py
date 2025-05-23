@@ -65,7 +65,9 @@ If you are a thinking model, don't think for too long — we want to play fast!
 
 moves (as player,column pairs):
 
+```
 {moves}
+```
 """
 
 

@@ -53,7 +53,7 @@ class C4Model(Model):
         assert isinstance(request, ModelRequest), 'Expected ModelRequest'
         system_prompt = '\n'.join(p.content for p in request.parts if isinstance(p, SystemPromptPart))
         logfire.info(f'{system_prompt=}')
-        moves_match = re.search('^moves.*:(.+)$', system_prompt, flags=re.DOTALL | re.MULTILINE)
+        moves_match = re.search('^```(.+)```$', system_prompt, flags=re.DOTALL | re.MULTILINE)
         assert moves_match is not None, 'Expected moves data'
         moves = moves_schema.validate_python(moves_match.group(1).strip().splitlines())
         r = await self.client.post(
