@@ -10,9 +10,4 @@ else
     export OTEL_EXPORTER_OTLP_HEADERS="Authorization=${LOGFIRE_TOKEN}"
 fi
 
-# workaround for https://github.com/kenrick95/c4/issues/76
-source=`find node_modules -name c4.js`
-dest="$(dirname "$source")/c4.mjs"
-cp $source $dest
-
 deno task run
