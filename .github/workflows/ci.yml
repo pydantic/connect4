@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '**'
+  pull_request: {}
+
+env:
+  COLUMNS: 150
+  UV_PYTHON: 3.12
+  UV_FROZEN: '1'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --all-files --verbose
