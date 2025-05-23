@@ -13,6 +13,7 @@ type AIModel = Literal[
     'openai:gpt-4o-mini',
     'openai:gpt-4.1',
     'openai:gpt-4.1-mini',
+    'anthropic:claude-opus-4-0',
     'anthropic:claude-3-7-sonnet-latest',
     'anthropic:claude-3-5-haiku-latest',
     'google-vertex:gemini-2.5-pro-preview-03-25',
@@ -27,6 +28,7 @@ model_labels: dict[AIModel, str] = {
     'openai:gpt-4o-mini': 'OpenAI GPT-4o-mini',
     'openai:gpt-4.1': 'OpenAI GPT-4.1',
     'openai:gpt-4.1-mini': 'OpenAI GPT-4.1-mini',
+    'anthropic:claude-opus-4-0': 'Anthropic Claude Opus 4.0',
     'anthropic:claude-3-7-sonnet-latest': 'Anthropic Claude 3.7 Sonnet',
     'anthropic:claude-3-5-haiku-latest': 'Anthropic Claude 3.5 Haiku',
     'google-vertex:gemini-2.5-pro-preview-03-25': 'Google-vertex Gemini 2.5 pro',
@@ -103,7 +105,7 @@ class GameState(BaseModel):
 
     def render_board(self) -> str:
         # -------- header line with column indices -------------------------
-        header = 'Columns:\n' + ' '.join(str(idx) for idx in range(1, N_COLUMNS + 1))
+        header = ' '.join(str(idx) for idx in range(1, N_COLUMNS + 1))
         return header + '\n' + self.board
 
     @computed_field

@@ -14,8 +14,10 @@ class Connect4Deps:
     game_state: GameState
 
 
-@dataclass
+@dataclass(kw_only=True)
 class AIMove:
+    reasoning: str = 'unset'
+    """Explain the reasoning behind the move."""
     column: Column
 
 
@@ -66,7 +68,7 @@ moves:
 {json.dumps(moves)}
 ```
 
-Board state:
+Board state (each line is one row):
 
 ```
 {ctx.deps.game_state.render_board()}
