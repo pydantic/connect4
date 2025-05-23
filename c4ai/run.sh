@@ -8,6 +8,12 @@ else
     export OTEL_SERVICE_NAME=c4ai
     export OTEL_DENO=true
     export OTEL_EXPORTER_OTLP_HEADERS="Authorization=${LOGFIRE_TOKEN}"
+    if [ -z "${RENDER}" ]; then
+        # render env var not set
+        OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=dev
+    else
+        OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=prod
+    fi
 fi
 
 deno task run
