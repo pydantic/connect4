@@ -19,6 +19,7 @@ type AIModel = Literal[
     'google-vertex:gemini-2.0-flash',
     'groq:llama-3.3-70b-versatile',
     'groq:deepseek-r1-distill-llama-70b',
+    'local:c4',
 ]
 
 model_labels: dict[AIModel, str] = {
@@ -32,6 +33,7 @@ model_labels: dict[AIModel, str] = {
     'google-vertex:gemini-2.0-flash': 'Google-vertex Gemini 2.0 flash',
     'groq:llama-3.3-70b-versatile': 'Groq Llama 3.3 70b',
     'groq:deepseek-r1-distill-llama-70b': 'Groq Deepseek R1 distill 70b',
+    'local:c4': 'Local Minimax',
 }
 
 

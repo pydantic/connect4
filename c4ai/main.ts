@@ -4,37 +4,32 @@ import * as logfire from 'logfire'
 
 logfire.configure()
 
-const columnSchema = z.number().min(1).max(7)
-const pinkMove = z.object({
-  player: z.literal('pink'),
-  column: columnSchema,
+const playerSchema = z.enum(['X', 'O'])
+type Player = z.infer<typeof playerSchema>
+const move = z.object({
+  player: playerSchema,
+  column: z.number().min(1).max(7),
 })
 
-const orangeMove = z.object({
-  player: z.literal('orange'),
-  column: columnSchema,
-})
-
-const movesSchema = z.array(z.union([pinkMove, orangeMove]))
+const movesSchema = z.array(move)
 type Moves = z.infer<typeof movesSchema>
-const requestSchema = z.object({ moves: movesSchema, next_player: z.enum(['pink', 'orange']) })
 
 interface Response {
   column: number
 }
 
-async function play(moves: Moves, nextPlayerColor: 'pink' | 'orange'): Promise<number> {
-  const player1 = new PlayerAi(BoardPiece.PLAYER_1, 'pink')
-  const player2 = new PlayerAi(BoardPiece.PLAYER_2, 'orange')
+async function play(moves: Moves, nextPlayerColor: Player): Promise<number> {
+  const player1 = new PlayerAi(BoardPiece.PLAYER_1, 'X')
+  const player2 = new PlayerAi(BoardPiece.PLAYER_2, 'O')
   const board = new BoardBase()
   for (const move of moves) {
-    if (move.player === 'pink') {
+    if (move.player === 'X') {
       board.applyPlayerAction(player1, move.column)
-    } else if (move.player === 'orange') {
+    } else if (move.player === 'O') {
       board.applyPlayerAction(player2, move.column)
     }
   }
-  const nextPlayer = nextPlayerColor === 'pink' ? player1 : player2
+  const nextPlayer = nextPlayerColor === 'X' ? player1 : player2
   return await nextPlayer.getAction(board)
 }
 
@@ -53,15 +48,21 @@ Deno.serve({ port }, async (req) => {
     logfire.warning('Invalid request JSON', logfireAddSchema({ error }))
     return new Response('Invalid request JSON', { status: 400 })
   }
-  const { success, error, data } = requestSchema.safeParse(json)
+  const { success, error, data } = movesSchema.safeParse(json)
   if (!success) {
     logfire.warning('Invalid request data', logfireAddSchema({ error }))
     return new Response(`Invalid request data: ${error}`, { status: 422 })
   }
-  const { moves, next_player } = data
+  const moves = data
   parseSpan.end()
+  let next_player: Player
+  if (moves.length === 0) {
+    next_player = 'X'
+  } else {
+    next_player = moves[moves.length - 1].player === 'X' ? 'O' : 'X'
+  }
 
-  const playSpan = logfire.startSpan('calculating next move for {next_player}', { next_player })
+  const playSpan = logfire.startSpan('calculating next move for {next_player}', { next_player, moves })
   const column = await play(moves, next_player)
   playSpan.setAttribute('column', column)
   playSpan.end()

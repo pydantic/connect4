@@ -1,9 +1,11 @@
+import json
 from dataclasses import dataclass
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.providers.google_vertex import GoogleVertexProvider
 
+from backend.c4model import C4Model
 from backend.game import FIRST_PLAYER, Column, GameState, get_player_icon
 
 
@@ -12,21 +14,26 @@ class Connect4Deps:
     game_state: GameState
 
 
-connect4_agent = Agent[Connect4Deps, Column](
+@dataclass
+class AIMove:
+    column: Column
+
+
+connect4_agent = Agent[Connect4Deps, AIMove](
     deps_type=Connect4Deps,
     retries=7,  # can try all columns lol
-    output_type=ToolOutput(type_=Column, name='move'),  # pyright: ignore[reportArgumentType]
+    output_type=ToolOutput(type_=AIMove, name='move'),
 )
 
 
 @connect4_agent.output_validator
-def validate_move(ctx: RunContext[Connect4Deps], column: Column) -> Column:
+def validate_move(ctx: RunContext[Connect4Deps], move: AIMove) -> AIMove:
     """Validate the move made by the agent."""
     try:
-        ctx.deps.game_state.validate_move(column)
+        ctx.deps.game_state.validate_move(move.column)
     except Exception as e:
         raise ModelRetry(str(e)) from e
-    return column
+    return move
 
 
 @connect4_agent.system_prompt
@@ -36,6 +43,7 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
     player_icon = get_player_icon(player)
     opponent_icon = get_player_icon('pink' if player == 'orange' else 'orange')
     first_player_icon = get_player_icon(FIRST_PLAYER)
+    moves = [{'column': m.column, 'player': get_player_icon(m.player)} for m in ctx.deps.game_state.moves]
 
     return f"""\
 You are an expert Connect Four strategist playing as **{player_icon}**
@@ -52,6 +60,11 @@ Apply these principles to choose the optimal move for the next turn:
 
 Analyze the board and use the `move` tool to respond with the column number (1‑7) of your best move.
 If you are a thinking model, don't think for too long — we want to play fast!
+
+moves:
+```json
+{json.dumps(moves)}
+```
 
 Board state:
 
@@ -74,7 +87,10 @@ async def generate_next_move(game_state: GameState) -> Column:
             model[len('google-vertex:') :],
             provider=GoogleVertexProvider(service_account_file='/etc/secrets/pai-service-account.json'),
         )
+    elif model == 'local:c4':
+        model = C4Model()
+
     result = await connect4_agent.run(
         'Please generate the next move', deps=Connect4Deps(game_state=game_state), model=model
     )
-    return result.output
+    return result.output.column

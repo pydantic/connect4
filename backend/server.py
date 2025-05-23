@@ -25,7 +25,7 @@ if commit := opt_commit:
 
 logfire.configure(
     environment='prod' if 'RENDER' in os.environ else 'dev',
-    service_name=os.getenv('RENDER_SERVICE_NAME'),
+    service_name=os.getenv('RENDER_SERVICE_NAME', 'connect4'),
     service_version=opt_commit,
     code_source=code_source,
 )
@@ -42,6 +42,7 @@ app = fastapi.FastAPI(lifespan=lifespan)
 logfire.instrument_fastapi(app, capture_headers=True)
 logfire.instrument_pydantic_ai()
 logfire.instrument_asyncpg()
+logfire.instrument_httpx(capture_all=True)
 
 app.include_router(api_router, prefix='/api')
 

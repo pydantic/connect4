@@ -17,6 +17,8 @@ services:
     build:
       context: c4ai
       dockerfile: Dockerfile
+    environment:
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
     ports:
       - '9000:9000'
     restart: unless-stopped
