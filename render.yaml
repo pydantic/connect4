@@ -15,10 +15,20 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
+      - key: C4AI_URL
+        value: "https://c4ai.onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: connect4-postgres
           property: connectionString
+  - type: web
+    name: c4ai
+    runtime: docker
+    rootDir: c4ai
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: LOGFIRE_TOKEN
+        sync: false
 
 databases:
   - name: connect4-postgres

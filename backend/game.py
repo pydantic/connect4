@@ -59,6 +59,16 @@ class GameState(BaseModel):
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
 
+    @computed_field(alias='pinkAIDisplay')
+    def pink_ai_display(self) -> str | None:
+        if self.pink_ai:
+            return model_labels[self.pink_ai]
+
+    @computed_field(alias='orangeAIDisplay')
+    def orange_ai_display(self) -> str | None:
+        if self.orange_ai:
+            return model_labels[self.orange_ai]
+
     def validate_move(self, column: Column) -> None:
         """
         Validate that the provided move is not trying to place a piece in a full column.

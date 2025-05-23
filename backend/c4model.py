@@ -1,9 +1,11 @@
 """Custom model to call the c4ai service"""
 
 import os
+import random
 import re
 from typing import Literal
 
+import logfire
 from pydantic import BaseModel, TypeAdapter
 from pydantic_ai.messages import ModelMessage, ModelRequest, ModelResponse, SystemPromptPart, ToolCallPart
 from pydantic_ai.models import Model, ModelRequestParameters, cached_async_http_client
@@ -20,7 +22,7 @@ class Move(BaseModel):
 
 
 class C4Move(BaseModel):
-    column: Column
+    column: int
 
 
 moves_schema = TypeAdapter(list[Move])
@@ -37,7 +39,8 @@ class C4Model(Model):
         model_settings: ModelSettings | None,
         model_request_parameters: ModelRequestParameters,
     ) -> ModelResponse:
-        request = messages[-1]
+        logfire.info('C4Model message count {count_messages}', count_messages=len(messages), messages=messages)
+        request = messages[0]
         assert isinstance(request, ModelRequest), 'Expected ModelRequest'
         system_prompt = '\n'.join(p.content for p in request.parts if isinstance(p, SystemPromptPart))
         moves_json = re.search('```json(.*?)```', system_prompt, flags=re.DOTALL)
@@ -48,7 +51,22 @@ class C4Model(Model):
         )
         r.raise_for_status()
         move = C4Move.model_validate_json(r.content)
+        # we should never reply with the same column twice
+        used_columns = self._used_columns(messages)
+        while move.column in used_columns:
+            logfire.info('column {move.column} already used', used_columns=used_columns, move=move)
+            move.column = random.randint(1, 7)
         return ModelResponse(parts=[ToolCallPart(tool_name='move', args=move.model_dump())])
+
+    @staticmethod
+    def _used_columns(messages: list[ModelMessage]) -> set[int]:
+        columns: set[int] = set()
+        for message in messages:
+            if isinstance(message, ModelResponse):
+                for part in message.parts:
+                    if isinstance(part, ToolCallPart) and part.tool_name == 'move':
+                        columns.add(part.args['column'])  # type: ignore
+        return columns
 
     @property
     def model_name(self) -> str:

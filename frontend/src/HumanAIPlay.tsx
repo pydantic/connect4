@@ -48,7 +48,7 @@ const HumanAIPlay: Component = () => {
 
     // Update the game status
     setGameStatus(gameState.status)
-    setOrangeAI(gameState.orangeAI)
+    setOrangeAI(gameState.orangeAIDisplay)
 
     // Apply moves in order
     for (const move of gameState.moves) {

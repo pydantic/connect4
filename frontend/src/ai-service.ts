@@ -47,7 +47,9 @@ interface Move {
 export interface GameState {
   moves: Move[]
   pinkAI: string | null
+  pinkAIDisplay: string | null
   orangeAI: string
+  orangeAIDisplay: string
   status: 'playing' | 'pink-win' | 'orange-win' | 'draw'
 }
 
