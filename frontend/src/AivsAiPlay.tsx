@@ -31,7 +31,7 @@ const AiVsAiPlay: Component = () => {
         console.error('Error: Game mode is not ai-vs-ai')
         setErrorMessage(`Wrong game mode, expected: ai-vs-ai`)
       } else {
-        setPinkAI(gameState.pinkAIDisplay)
+        setPinkAI(gameState.pinkAIDisplay || 'unknown')
         setOrangeAI(gameState.orangeAIDisplay)
       }
 

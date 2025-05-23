@@ -1,0 +1,55 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: format-frontend
+        name: Format Frontend
+        entry: make
+        args: [format-frontend]
+        language: system
+        files: '^frontend/'
+        pass_filenames: false
+      - id: typecheck-frontend
+        name: Typecheck Frontend
+        entry: make
+        args: [typecheck-frontend]
+        language: system
+        files: '^frontend/'
+        pass_filenames: false
+
+      - id: format-c4ai
+        name: Format c4ai
+        entry: make
+        args: [format-c4ai]
+        language: system
+        files: '^c4ai/'
+        pass_filenames: false
+      - id: typecheck-c4ai
+        name: Typecheck c4ai
+        entry: make
+        args: [typecheck-c4ai]
+        language: system
+        files: '^c4ai/'
+        pass_filenames: false
+
+      - id: format-python
+        name: Format Python
+        entry: make
+        args: [format-py]
+        language: system
+        files: '^backend/'
+        pass_filenames: false
+      - id: typecheck-python
+        name: Typecheck Python
+        entry: make
+        args: [typecheck-py]
+        language: system
+        files: '^backend/'
+        pass_filenames: false
