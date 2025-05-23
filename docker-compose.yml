@@ -13,6 +13,16 @@ services:
     depends_on:
       - db
 
+  c4ai:
+    build:
+      context: c4ai
+      dockerfile: Dockerfile
+    ports:
+      - '9000:9000'
+    restart: unless-stopped
+    depends_on:
+      - db
+
   db:
     image: postgres:17
     environment:
