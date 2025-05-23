@@ -1,23 +1,31 @@
 import { Component, createSignal, Show, For, onMount } from 'solid-js'
-import { GameMode, AI_MODELS, PlayerType, PlayerColor } from './game-types'
-import { initializeGame } from './ai-service'
+import { GameMode, PlayerType, PlayerColor } from './game-types'
+import { initializeGame, getModels } from './ai-service'
 import styles from './PlayerSelection.module.css'
 import appStyles from './App.module.css'
 import { useNavigate } from '@solidjs/router'
-import { Select } from './components/select'
+import { Select, SelectOption } from './components/select'
 import { A } from '@solidjs/router'
 
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
   const [gameMode, setGameMode] = createSignal<GameMode>('human-vs-ai')
-  const [pinkAI, setPinkAI] = createSignal('Anthropic claude-3-7-sonnet-latest')
-  const [orangeAI, setOrangeAI] = createSignal('OpenAI gpt-4o')
+  const [pinkAI, setPinkAI] = createSignal<SelectOption>({value: '', label: ''})
+  const [orangeAI, setOrangeAI] = createSignal<SelectOption>({value: '', label: ''})
+  const [models, setModels] = createSignal<SelectOption[]>([])
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
   const navigate = useNavigate()
 
+  const getSetModels = async () => {
+    const {models, default_pink, default_orange} = await getModels()
+    setModels(models)
+    setPinkAI(default_pink)
+    setOrangeAI(default_orange)
+  }
+
   onMount(() => {
-    console.log('PlayerSelection component mounted')
+    getSetModels()
   })
 
   const startGame = async () => {
@@ -26,7 +34,7 @@ const PlayerSelection: Component = () => {
 
     try {
       // Get a game ID from the server
-      const gameId = await initializeGame(orangeAI(), gameMode() == 'human-vs-ai' ? null : pinkAI())
+      const gameId = await initializeGame(orangeAI().value, gameMode() == 'human-vs-ai' ? null : pinkAI().value)
       console.log('Got game ID from server:', gameId)
 
       // Use the same mode string format for routing
@@ -69,7 +77,7 @@ const PlayerSelection: Component = () => {
             <div class={styles.playerConfig}>
               <div class={`${styles.gamePiece} ${styles.pinkPiece}`}></div>
               <h3>Pink Player (AI)</h3>
-              <Select value={pinkAI()} onChange={setPinkAI} options={AI_MODELS} />
+              <Select value={pinkAI()} onChange={setPinkAI} options={models()} />
             </div>
           </Show>
 
@@ -84,7 +92,7 @@ const PlayerSelection: Component = () => {
           <div class={styles.playerConfig}>
             <div class={`${styles.gamePiece} ${styles.orangePiece}`}></div>
             <h3>Orange Player (AI)</h3>
-            <Select value={orangeAI()} onChange={setOrangeAI} options={AI_MODELS} />
+            <Select value={orangeAI()} onChange={setOrangeAI} options={models()} />
           </div>
         </div>
 

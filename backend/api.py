@@ -7,9 +7,31 @@ from pydantic import UUID4, BaseModel, Field
 
 from .agent import generate_next_move
 from .db import DB
-from .game import AIModel, Column, GameState
+from .game import AIModel, Column, GameState, model_labels
 
 api_router = APIRouter()
+
+
+class ModelLabel(BaseModel):
+    value: str
+    label: str
+
+
+class ModelsSummary(BaseModel):
+    models: list[ModelLabel]
+    default_pink: ModelLabel
+    default_orange: ModelLabel
+
+
+@api_router.get('/models')
+async def get_models() -> ModelsSummary:
+    pink: AIModel = 'anthropic:claude-3-7-sonnet-latest'
+    orange: AIModel = 'openai:gpt-4o'
+    return ModelsSummary(
+        models=[ModelLabel(value=k, label=v) for k, v in model_labels.items()],
+        default_pink=ModelLabel(value=pink, label=model_labels[pink]),
+        default_orange=ModelLabel(value=orange, label=model_labels[orange]),
+    )
 
 
 class StartGame(BaseModel):

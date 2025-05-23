@@ -3,21 +3,28 @@ import { Component, Setter } from 'solid-js'
 import styles from './select.module.css'
 import { ChevronDown } from '../icons/chevron-down'
 
-export const Select: Component<{ value: string; onChange: Setter<string>; options: string[] }> = (props) => {
+export interface SelectOption {
+  value: string
+  label: string
+}
+
+export const Select: Component<{ value: SelectOption; onChange: Setter<SelectOption>; options: SelectOption[] }> = (props) => {
   return (
     <KSelect
       value={props.value}
       onChange={props.onChange}
       options={props.options}
+      optionValue="value"
+			optionTextValue="label"
       itemComponent={(props) => (
         <KSelect.Item item={props.item} class={styles.select__item}>
-          <KSelect.ItemLabel>{props.item.rawValue}</KSelect.ItemLabel>
+          <KSelect.ItemLabel>{props.item.rawValue.label}</KSelect.ItemLabel>
           <KSelect.ItemIndicator class={styles['select__item-indicator']}></KSelect.ItemIndicator>
         </KSelect.Item>
       )}
     >
-      <KSelect.Trigger class={styles.select__trigger} aria-label="Orange player model">
-        <KSelect.Value<string> class={styles.select__value}>{(state) => state.selectedOption()}</KSelect.Value>
+      <KSelect.Trigger class={styles.select__trigger} aria-label="Player model">
+        <KSelect.Value<SelectOption> class={styles.select__value}>{state => state.selectedOption().label}</KSelect.Value>
         <KSelect.Icon class={styles.select__icon}>
           <ChevronDown />
         </KSelect.Icon>

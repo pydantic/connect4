@@ -9,17 +9,30 @@ from pydantic import BaseModel, Field, computed_field
 type GameStatus = Literal['playing', 'pink-win', 'orange-win', 'draw']
 type Player = Literal['pink', 'orange']
 type AIModel = Literal[
-    'OpenAI gpt-4o',
-    'OpenAI gpt-4o-mini',
-    'OpenAI gpt-4.1',
-    'OpenAI gpt-4.1-mini',
-    'Anthropic claude-3-7-sonnet-latest',
-    'Anthropic claude-3-5-haiku-latest',
-    'Google-vertex gemini-2.5-pro-preview-03-25',
-    'Google-vertex gemini-2.0-flash',
-    'Groq llama-3.3-70b-versatile',
-    'Groq deepseek-r1-distill-llama-70b',
+    'openai:gpt-4o',
+    'openai:gpt-4o-mini',
+    'openai:gpt-4.1',
+    'openai:gpt-4.1-mini',
+    'anthropic:claude-3-7-sonnet-latest',
+    'anthropic:claude-3-5-haiku-latest',
+    'google-vertex:gemini-2.5-pro-preview-03-25',
+    'google-vertex:gemini-2.0-flash',
+    'groq:llama-3.3-70b-versatile',
+    'groq:deepseek-r1-distill-llama-70b',
 ]
+
+model_labels: dict[AIModel, str] = {
+    'openai:gpt-4o': 'OpenAI GPT-4o',
+    'openai:gpt-4o-mini': 'OpenAI GPT-4o-mini',
+    'openai:gpt-4.1': 'OpenAI GPT-4.1',
+    'openai:gpt-4.1-mini': 'OpenAI GPT-4.1-mini',
+    'anthropic:claude-3-7-sonnet-latest': 'Anthropic Claude 3.7 Sonnet',
+    'anthropic:claude-3-5-haiku-latest': 'Anthropic Claude 3.5 Haiku',
+    'google-vertex:gemini-2.5-pro-preview-03-25': 'Google-vertex Gemini 2.5 pro',
+    'google-vertex:gemini-2.0-flash': 'Google-vertex Gemini 2.0 flash',
+    'groq:llama-3.3-70b-versatile': 'Groq Llama 3.3 70b',
+    'groq:deepseek-r1-distill-llama-70b': 'Groq Deepseek R1 distill 70b',
+}
 
 
 def get_player_icon(player: Player) -> str:
