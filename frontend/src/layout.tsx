@@ -7,9 +7,7 @@ export const Layout: Component<{ children: JSX.Element }> = ({ children }) => {
   return (
     <GridBackground>
       <section class={styles.layout}>
-        <main class={styles.content}>
-          {children}
-        </main>
+        <main class={styles.content}>{children}</main>
         <footer class={styles.footer}>
           <a href="https://pydantic.dev" target="_blank" rel="noopener noreferrer">
             <PydanticLogo />

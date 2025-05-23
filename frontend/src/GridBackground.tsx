@@ -1,8 +1,8 @@
-import { Component, JSX } from 'solid-js';
-import styles from './GridBackground.module.css';
+import { Component, JSX } from 'solid-js'
+import styles from './GridBackground.module.css'
 
 interface GridBackgroundProps {
-  children: JSX.Element;
+  children: JSX.Element
 }
 
 const GridBackground: Component<GridBackgroundProps> = (props) => {
@@ -14,7 +14,7 @@ const GridBackground: Component<GridBackgroundProps> = (props) => {
       </div>
       {props.children}
     </div>
-  );
-};
+  )
+}
 
-export default GridBackground; 
+export default GridBackground

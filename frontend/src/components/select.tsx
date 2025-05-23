@@ -8,14 +8,16 @@ export interface SelectOption {
   label: string
 }
 
-export const Select: Component<{ value: SelectOption; onChange: Setter<SelectOption>; options: SelectOption[] }> = (props) => {
+export const Select: Component<{ value: SelectOption; onChange: Setter<SelectOption>; options: SelectOption[] }> = (
+  props,
+) => {
   return (
     <KSelect
       value={props.value}
       onChange={props.onChange}
       options={props.options}
       optionValue="value"
-			optionTextValue="label"
+      optionTextValue="label"
       itemComponent={(props) => (
         <KSelect.Item item={props.item} class={styles.select__item}>
           <KSelect.ItemLabel>{props.item.rawValue.label}</KSelect.ItemLabel>
@@ -24,7 +26,9 @@ export const Select: Component<{ value: SelectOption; onChange: Setter<SelectOpt
       )}
     >
       <KSelect.Trigger class={styles.select__trigger} aria-label="Player model">
-        <KSelect.Value<SelectOption> class={styles.select__value}>{state => state.selectedOption().label}</KSelect.Value>
+        <KSelect.Value<SelectOption> class={styles.select__value}>
+          {(state) => state.selectedOption().label}
+        </KSelect.Value>
         <KSelect.Icon class={styles.select__icon}>
           <ChevronDown />
         </KSelect.Icon>

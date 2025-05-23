@@ -169,7 +169,7 @@ const HomePage: Component = () => {
             </div>
             <div class={styles.cardContent}>
               <A href="https://forms.gle/akrTxE3yxqFduxdN7" target="_blank" class={styles.button}>
-                <GiftIcon /> 
+                <GiftIcon />
                 Join the Prize Draw
               </A>
               <p class={styles.description}>Go into the running to win one of four awesome developer prizes.</p>

@@ -16,7 +16,7 @@ services:
       - key: GROQ_API_KEY
         sync: false
       - key: C4AI_URL
-        value: "https://c4ai.onrender.com"
+        value: 'https://c4ai.onrender.com'
       - key: DATABASE_URL
         fromDatabase:
           name: connect4-postgres
