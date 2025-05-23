@@ -23,11 +23,8 @@ async function play(moves: Moves, nextPlayerColor: Player): Promise<number> {
   const player2 = new PlayerAi(BoardPiece.PLAYER_2, 'O')
   const board = new BoardBase()
   for (const move of moves) {
-    if (move.player === 'X') {
-      board.applyPlayerAction(player1, move.column)
-    } else if (move.player === 'O') {
-      board.applyPlayerAction(player2, move.column)
-    }
+    const player = move.player === 'X' ? player1 : player2
+    board.applyPlayerAction(player, move.column)
   }
   const nextPlayer = nextPlayerColor === 'X' ? player1 : player2
   return await nextPlayer.getAction(board)
