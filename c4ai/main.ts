@@ -36,7 +36,9 @@ async function play(moves: Moves, nextPlayerColor: Player): Promise<number> {
 const port = parseInt(Deno.env.get('PORT') || '9000')
 
 Deno.serve({ port }, async (req) => {
-  if (req.method !== 'POST') {
+  if (req.method == 'HEAD') {
+    return new Response('', { status: 200 })
+  } else if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 })
   }
   const parseSpan = logfire.startSpan('parsing request')
