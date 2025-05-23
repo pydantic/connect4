@@ -19,6 +19,7 @@ type AIModel = Literal[
     'google-vertex:gemini-2.0-flash',
     'groq:llama-3.3-70b-versatile',
     'groq:deepseek-r1-distill-llama-70b',
+    'local:c4',
 ]
 
 model_labels: dict[AIModel, str] = {
@@ -32,6 +33,7 @@ model_labels: dict[AIModel, str] = {
     'google-vertex:gemini-2.0-flash': 'Google-vertex Gemini 2.0 flash',
     'groq:llama-3.3-70b-versatile': 'Groq Llama 3.3 70b',
     'groq:deepseek-r1-distill-llama-70b': 'Groq Deepseek R1 distill 70b',
+    'local:c4': 'Local Minimax',
 }
 
 
@@ -56,6 +58,16 @@ class GameState(BaseModel):
     orange_ai: AIModel = Field(serialization_alias='orangeAI')
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
+
+    @computed_field(alias='pinkAIDisplay')
+    def pink_ai_display(self) -> str | None:
+        if self.pink_ai:
+            return model_labels[self.pink_ai]
+
+    @computed_field(alias='orangeAIDisplay')
+    def orange_ai_display(self) -> str | None:
+        if self.orange_ai:
+            return model_labels[self.orange_ai]
 
     def validate_move(self, column: Column) -> None:
         """

@@ -2,17 +2,17 @@ import { Board, PlayerColor, GameMode } from './game-types'
 import type { SelectOption } from './components/select'
 
 interface ModelsSummary {
-    models: SelectOption[]
-    default_pink: SelectOption
-    default_orange: SelectOption
+  models: SelectOption[]
+  default_pink: SelectOption
+  default_orange: SelectOption
 }
 
 export async function getModels(): Promise<ModelsSummary> {
-  const response = await fetch("/api/models");
+  const response = await fetch('/api/models')
   if (response.ok) {
-    return await response.json();
+    return await response.json()
   } else {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
   }
 }
 
@@ -47,7 +47,9 @@ interface Move {
 export interface GameState {
   moves: Move[]
   pinkAI: string | null
+  pinkAIDisplay: string | null
   orangeAI: string
+  orangeAIDisplay: string
   status: 'playing' | 'pink-win' | 'orange-win' | 'draw'
 }
 

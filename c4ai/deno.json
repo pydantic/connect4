@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "dev": "deno run --watch -A --unstable-otel main.ts",
+    "run": "deno run -A --unstable-otel main.ts"
+  },
+  "nodeModulesDir": "auto",
+  "imports": {
+    "@kenrick95/c4": "npm:@kenrick95/c4@5.1.0",
+    "logfire": "npm:logfire@^0.5.1",
+    "zod": "npm:zod@^3.25.20"
+  },
+  "fmt": {
+    "lineWidth": 120,
+    "semiColons": false,
+    "singleQuote": true,
+    "include": ["."]
+  }
+}

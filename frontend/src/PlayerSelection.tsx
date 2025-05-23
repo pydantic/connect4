@@ -10,15 +10,15 @@ import { A } from '@solidjs/router'
 const PlayerSelection: Component = () => {
   console.log('PlayerSelection component rendering')
   const [gameMode, setGameMode] = createSignal<GameMode>('human-vs-ai')
-  const [pinkAI, setPinkAI] = createSignal<SelectOption>({value: '', label: ''})
-  const [orangeAI, setOrangeAI] = createSignal<SelectOption>({value: '', label: ''})
+  const [pinkAI, setPinkAI] = createSignal<SelectOption>({ value: '', label: '' })
+  const [orangeAI, setOrangeAI] = createSignal<SelectOption>({ value: '', label: '' })
   const [models, setModels] = createSignal<SelectOption[]>([])
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null)
   const [isStartingGame, setIsStartingGame] = createSignal<boolean>(false)
   const navigate = useNavigate()
 
   const getSetModels = async () => {
-    const {models, default_pink, default_orange} = await getModels()
+    const { models, default_pink, default_orange } = await getModels()
     setModels(models)
     setPinkAI(default_pink)
     setOrangeAI(default_orange)

@@ -17,7 +17,7 @@
 }
 
 .pageContent {
-  background-color: #2F1B2B;
+  background-color: #2f1b2b;
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 600px;
@@ -52,7 +52,6 @@
 .cardIcon svg {
   width: 84px;
 }
-
 
 .cardPrizeIcon {
   flex-grow: 1;
@@ -120,21 +119,22 @@
   .mainTitle {
     font-size: 2rem;
   }
-  
+
   .card {
     flex-direction: row;
     text-align: left;
   }
-  
-  .cardIcon, .cardPrizeIcon {
+
+  .cardIcon,
+  .cardPrizeIcon {
     margin-bottom: 0;
     margin-right: 2rem;
   }
-  
+
   .cardContent {
     align-items: flex-start;
   }
-  
+
   .description {
     text-align: left;
   }
@@ -145,15 +145,15 @@
   .homeContainer {
     padding: 1.5rem;
   }
-  
+
   .mainTitle {
     font-size: 1.8rem;
   }
-  
+
   .pageContent {
     padding: 1rem;
   }
-  
+
   .card {
     padding: 1rem;
   }
@@ -161,12 +161,12 @@
   .cardContent {
     width: 100%;
   }
-  
+
   .button {
     font-size: 1rem;
     padding: 0.8rem 1.5rem;
   }
-  
+
   .description {
     font-size: 0.9rem;
     max-width: 100%;
