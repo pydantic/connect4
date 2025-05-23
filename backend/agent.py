@@ -1,6 +1,6 @@
-import json
 from dataclasses import dataclass
 
+import logfire
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.providers.google_vertex import GoogleVertexProvider
@@ -45,7 +45,7 @@ def build_connect4_instructions(ctx: RunContext[Connect4Deps]) -> str:
     player_icon = get_player_icon(player)
     opponent_icon = get_player_icon('pink' if player == 'orange' else 'orange')
     first_player_icon = get_player_icon(FIRST_PLAYER)
-    moves = [{'column': m.column, 'player': get_player_icon(m.player)} for m in ctx.deps.game_state.moves]
+    moves = '\n'.join(f'{get_player_icon(m.player)},{m.column}' for m in ctx.deps.game_state.moves)
 
     return f"""\
 You are an expert Connect Four strategist playing as **{player_icon}**
@@ -63,15 +63,10 @@ Apply these principles to choose the optimal move for the next turn:
 Analyze the board and use the `move` tool to respond with the column number (1‑7) of your best move.
 If you are a thinking model, don't think for too long — we want to play fast!
 
-moves:
-```json
-{json.dumps(moves)}
-```
-
-Board state (each line is one row):
+moves (as player,column pairs):
 
 ```
-{ctx.deps.game_state.render_board()}
+{moves}
 ```
 """
 
@@ -92,6 +87,7 @@ async def generate_next_move(game_state: GameState) -> Column:
     elif model == 'local:c4':
         model = C4Model()
 
+    logfire.info('playing', board=game_state.render_board())
     result = await connect4_agent.run(
         'Please generate the next move', deps=Connect4Deps(game_state=game_state), model=model
     )

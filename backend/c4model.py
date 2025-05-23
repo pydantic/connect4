@@ -6,7 +6,7 @@ import re
 from typing import Literal
 
 import logfire
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, TypeAdapter, model_validator
 from pydantic_ai.messages import ModelMessage, ModelRequest, ModelResponse, SystemPromptPart, ToolCallPart
 from pydantic_ai.models import Model, ModelRequestParameters, cached_async_http_client
 from pydantic_ai.settings import ModelSettings
@@ -19,6 +19,15 @@ __all__ = ('C4Model',)
 class Move(BaseModel):
     column: Column
     player: Literal['X', 'O']
+
+    @model_validator(mode='before')
+    @classmethod
+    def validate_column(cls, value: str | dict[str, str | int]) -> dict[str, str | int]:
+        if isinstance(value, str):
+            player, column = value.strip().split(',', 1)
+            return {'column': column, 'player': player}
+        else:
+            return value
 
 
 class C4Move(BaseModel):
@@ -43,9 +52,10 @@ class C4Model(Model):
         request = messages[0]
         assert isinstance(request, ModelRequest), 'Expected ModelRequest'
         system_prompt = '\n'.join(p.content for p in request.parts if isinstance(p, SystemPromptPart))
-        moves_json = re.search('```json(.*?)```', system_prompt, flags=re.DOTALL)
-        assert moves_json is not None, 'Expected moves JSON'
-        moves = moves_schema.validate_json(moves_json.group(1))
+        logfire.info(f'{system_prompt=}')
+        moves_match = re.search('^```(.+)```$', system_prompt, flags=re.DOTALL | re.MULTILINE)
+        assert moves_match is not None, 'Expected moves data'
+        moves = moves_schema.validate_python(moves_match.group(1).strip().splitlines())
         r = await self.client.post(
             c4ai_url, content=moves_schema.dump_json(moves), headers={'Content-Type': 'application/json'}
         )
