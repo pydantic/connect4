@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
       DATABASE_URL: postgresql://postgres:postgres@db:5432/connect4
     ports:
       - '8000:8000'

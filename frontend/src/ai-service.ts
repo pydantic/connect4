@@ -1,4 +1,20 @@
 import { Board, PlayerColor, GameMode } from './game-types'
+import type { SelectOption } from './components/select'
+
+interface ModelsSummary {
+    models: SelectOption[]
+    default_pink: SelectOption
+    default_orange: SelectOption
+}
+
+export async function getModels(): Promise<ModelsSummary> {
+  const response = await fetch("/api/models");
+  if (response.ok) {
+    return await response.json();
+  } else {
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+}
 
 // Interface for the start game response
 interface StartGameResponse {
