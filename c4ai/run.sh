@@ -10,9 +10,9 @@ else
     export OTEL_EXPORTER_OTLP_HEADERS="Authorization=${LOGFIRE_TOKEN}"
     if [ -z "${RENDER}" ]; then
         # render env var not set
-        OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=dev
+        export OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=dev
     else
-        OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=prod
+        export OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=prod
     fi
 fi
 
