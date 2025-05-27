@@ -19,7 +19,7 @@ authors = [
 license = "MIT"
 
 [dependency-groups]
-dev = ["ruff >= 0.8.3", "pyright >= 1.1.397", "asyncpg-stubs>=0.30.1"]
+dev = ["ruff>=0.8.3", "pyright>=1.1.397", "asyncpg-stubs>=0.30.1"]
 
 [tool.pyright]
 typeCheckingMode = "strict"

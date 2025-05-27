@@ -34,8 +34,8 @@ async def get_models() -> ModelsSummary:
     )
 
 
-class StartGame(BaseModel):
-    game_id: UUID4 = Field(serialization_alias='gameID')
+class StartGame(BaseModel, validate_by_name=True):
+    game_id: UUID4 = Field(serialization_alias='gameID', validation_alias='gameID')
 
 
 @api_router.get('/games/start')
