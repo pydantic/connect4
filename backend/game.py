@@ -55,9 +55,9 @@ class Move(BaseModel):
     column: Column
 
 
-class GameState(BaseModel):
-    pink_ai: AIModel | None = Field(serialization_alias='pinkAI')
-    orange_ai: AIModel = Field(serialization_alias='orangeAI')
+class GameState(BaseModel, validate_by_name=True):
+    pink_ai: AIModel | None = Field(serialization_alias='pinkAI', validation_alias='pinkAI')
+    orange_ai: AIModel = Field(serialization_alias='orangeAI', validation_alias='orangeAI')
     status: GameStatus = 'playing'
     moves: list[Move] = Field(default_factory=list[Move])
 

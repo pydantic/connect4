@@ -29,6 +29,15 @@ services:
     envVars:
       - key: LOGFIRE_TOKEN
         sync: false
+  - type: worker
+    name: spider
+    dockerCommand: uv run --no-sync -m backend.spider
+    runtime: docker
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_BASE_URL
+        value: 'https://logfire.run'
 
 databases:
   - name: connect4-postgres

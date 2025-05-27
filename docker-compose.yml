@@ -27,6 +27,17 @@ services:
     depends_on:
       - db
 
+  spider:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uv run --no-sync -m backend.spider
+    environment:
+      APP_BASE_URL: http://app:8000
+    restart: unless-stopped
+    depends_on:
+      - app
+
   db:
     image: postgres:17
     environment:
