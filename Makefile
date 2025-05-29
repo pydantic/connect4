@@ -53,7 +53,7 @@ typecheck: typecheck-frontend typecheck-c4ai typecheck-py ## Run static type che
 
 .PHONY: backend-dev
 backend-dev: ## Run the bakcend
-	uv run uvicorn backend.server:app --reload
+	DATABASE_URL=postgresql://postgres:postgres@localhost:54320/connect4 uv run uvicorn backend.server:app --reload
 
 .PHONY: all
 all: format lint typecheck
