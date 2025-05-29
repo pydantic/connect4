@@ -53,17 +53,6 @@
   width: 84px;
 }
 
-.cardPrizeIcon {
-  flex-grow: 1;
-  margin-bottom: 1.5rem;
-  display: flex;
-  justify-content: center;
-}
-
-.cardPrizeIcon svg {
-  width: 64px;
-}
-
 .cardContent {
   display: flex;
   flex-direction: column;
