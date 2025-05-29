@@ -29,22 +29,22 @@ async def main():
 
 async def status(client: httpx.AsyncClient, app_base_url: str):
     print(f'checking status HEAD {app_base_url}...', flush=True)
-    r = await client.head(app_base_url)
+    r = await client.head(app_base_url, follow_redirects=True)
     r.raise_for_status()
     print(f'HEAD {app_base_url} -> {status}', flush=True)
 
 
 async def load_page(client: httpx.AsyncClient, app_base_url: str):
     print(f'loading page GET {app_base_url}...', flush=True)
-    r = await client.get(app_base_url)
+    r = await client.get(app_base_url, follow_redirects=True)
     r.raise_for_status()
     print(f'GET {app_base_url} -> {r.status_code}', flush=True)
-    for match in re.finditer(r'href="([^"]+)"', r.text):
+    for match in re.finditer(r'(?:src|href)="([^"]+)"', r.text):
         url = match.group(1)
         if url.startswith('/'):
             url = f'{app_base_url}{url}'
         print(f'Getting: {url}...')
-        r = await client.get(url)
+        r = await client.get(url, follow_redirects=True)
         print(f'GET {match.group(1)} -> {r.status_code}', flush=True)
 
 
