@@ -1,0 +1,31 @@
+{
+  "name": "c4ai",
+  "version": "1.0.0",
+  "main": "main.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --import ./instrumentation.ts --experimental-strip-types --disable-warning=ExperimentalWarning main.ts",
+    "typecheck": "tsc",
+    "format": "biome format --write",
+    "check": "biome check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@kenrick95/c4": "^5.1.1",
+    "express": "^5.1.0",
+    "logfire": "^0.5.2",
+    "zod": "^3.25.51"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=24.1.0"
+  }
+}

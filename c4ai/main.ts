@@ -1,8 +1,9 @@
 import { BoardBase, BoardPiece, PlayerAi } from '@kenrick95/c4'
-import { z } from 'zod'
+
+import express from 'express'
 import * as logfire from 'logfire'
 
-logfire.configure()
+import { z } from 'zod'
 
 const playerSchema = z.enum(['X', 'O'])
 type Player = z.infer<typeof playerSchema>
@@ -30,62 +31,78 @@ async function play(moves: Moves, nextPlayerColor: Player): Promise<number> {
   return await nextPlayer.getAction(board)
 }
 
-const port = parseInt(Deno.env.get('PORT') || '9000')
+const app = express()
 
-Deno.serve({ port }, async (req) => {
-  const { pathname } = new URL(req.url)
-  if (pathname !== '/') {
-    return new Response('Path Not Found', { status: 404 })
-  } else if (req.method === 'HEAD') {
-    return new Response('', { status: 200 })
-  } else if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 })
-  }
-  const parseSpan = logfire.startSpan('parsing request')
-  // get the request json and validate it
-  let json: string
-  try {
-    json = await req.json()
-  } catch (error) {
-    logfire.warning('Invalid request JSON', logfireAddSchema({ error }))
-    return new Response('Invalid request JSON', { status: 400 })
-  }
-  const { success, error, data } = movesSchema.safeParse(json)
-  if (!success) {
-    logfire.warning('Invalid request data', logfireAddSchema({ error }))
-    return new Response(`Invalid request data: ${error}`, { status: 422 })
-  }
-  const moves = data
-  parseSpan.end()
-  let next_player: Player
-  if (moves.length === 0) {
-    next_player = 'X'
-  } else {
-    next_player = moves[moves.length - 1].player === 'X' ? 'O' : 'X'
-  }
+// Middleware for parsing JSON
+app.use(express.json())
 
-  const playSpan = logfire.startSpan('calculating next move for {next_player}', { next_player, moves })
-  const column = await play(moves, next_player)
-  playSpan.setAttribute('column', column)
-  playSpan.end()
-
-  const responseData: Response = { column }
-  return new Response(JSON.stringify(responseData))
+// Health check endpoint
+app.head('/', (_req, res) => {
+  res.status(200).end()
 })
 
-function logfireAddSchema(attributes: Record<string, unknown>): Record<string, string | number | boolean> {
-  const properties: Record<string, unknown> = {}
-  const newAttrs: Record<string, string | number | boolean> = {}
-  for (const [key, value] of Object.entries(attributes)) {
-    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-      newAttrs[key] = value
-    } else {
-      newAttrs[key] = JSON.stringify(value)
-      properties[key] = { type: typeof value }
+// Main endpoint
+app.post('/', async (req, res) => {
+  try {
+    const { success, error, data } = logfire.span(
+      'parsing request',
+      {},
+      {},
+      (span) => {
+        const result = movesSchema.safeParse(req.body)
+        span.end()
+        return result
+      }
+    )
+
+    if (!success) {
+      logfire.warning('Invalid request data', { error })
+      res.status(422).type('text/plain').send(`Invalid request data: ${error}`)
+      return
     }
+
+    if (!data || data.length === 0) {
+      logfire.warning('No moves provided in request', { data })
+      res.status(422).type('text/plain').send('No moves provided in request')
+      return
+    }
+
+    const moves = data
+
+    let next_player: Player
+    if (moves.length === 0) {
+      next_player = 'X'
+    } else {
+      next_player = moves[moves.length - 1].player === 'X' ? 'O' : 'X'
+    }
+
+    const column = await logfire.span(
+      'calculating next move for {next_player}',
+      { next_player, moves },
+      {},
+      async (playSpan) => {
+        const result = await play(moves, next_player)
+        playSpan.setAttribute('column', result)
+        playSpan.end()
+        return result
+      }
+    )
+
+    const responseData: Response = { column }
+    res.json(responseData)
+  } catch (error) {
+    logfire.warning('Invalid request JSON', { error })
+    res.status(400).type('text/plain').send('Invalid request JSON')
   }
-  if (Object.keys(properties).length > 0) {
-    newAttrs['logfire.json_schema'] = JSON.stringify({ type: 'object', properties })
-  }
-  return newAttrs
-}
+})
+
+// Handle 404 for other routes
+app.all('{*splat}', (_req, res) => {
+  res.status(404).end()
+})
+
+const SERVER_PORT = Number.parseInt(process.env.PORT || '9000')
+
+app.listen(SERVER_PORT, () => {
+  console.log(`Server is running on port ${SERVER_PORT}`)
+})

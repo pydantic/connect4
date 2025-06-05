@@ -6,8 +6,8 @@
     "frontend"
   ],
   "scripts": {
-    "format": "prettier --write -- .",
-    "lint": "prettier --check -- .",
+    "format": "prettier --write -- frontend",
+    "lint": "prettier --check -- frontend",
     "typecheck": "npm run --workspace frontend typecheck",
     "dev": "npm run --workspace frontend dev",
     "build": "npm run --workspace frontend build"
