@@ -25,11 +25,13 @@ jobs:
 
       - run: uv sync
 
-      - uses: denoland/setup-deno@v2
+      - uses: actions/setup-node@v4
         with:
-          deno-version: v2.x
+          node-version: '24.1.0'
 
-      - run: deno install --allow-scripts
+      - run: |
+          npm install
+          cd c4ai && npm install
 
       - uses: pre-commit/action@v3.0.0
         with:

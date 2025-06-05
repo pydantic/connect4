@@ -8,12 +8,9 @@
 .pre-commit: ## Check that pre-commit is installed
 	@pre-commit -V || echo 'Please install pre-commit: https://pre-commit.com/'
 
-.PHONY: .deno
-.deno: ## Check that deno is installed
-	@deno --version > /dev/null 2>&1 || (printf "\033[0;31m✖ Error: deno is not installed, but is needed for mcp-run-python\033[0m\n    Please install deno: https://docs.deno.com/runtime/getting_started/installation/\n" && exit 1)
 
 .PHONY: install
-install: .uv .pre-commit .deno ## Install the package, dependencies, and pre-commit for local development
+install: .uv .pre-commit ## Install the package, dependencies, and pre-commit for local development
 	uv sync --frozen
 	pre-commit install --install-hooks
 
@@ -23,9 +20,7 @@ format-frontend: ## Format frontend code
 
 .PHONY: format-c4ai
 format-c4ai: ## Format the code
-	cd c4ai && deno fmt
-	cd c4ai && deno lint
-	cd c4ai && deno check main.ts
+	cd c4ai && npm run format
 
 .PHONY: format-py
 format-py: ## Format python code
@@ -41,7 +36,7 @@ typecheck-frontend: ## Run static type checking for frontend code
 
 .PHONY: typecheck-c4ai
 typecheck-c4ai: ## Run static type checking for c4ai code
-	cd c4ai && deno check main.ts
+	cd c4ai && npm run typecheck
 
 .PHONY: typecheck-py
 typecheck-py: ## Run static type checking for python code
@@ -51,8 +46,15 @@ typecheck-py: ## Run static type checking for python code
 .PHONY: typecheck
 typecheck: typecheck-frontend typecheck-c4ai typecheck-py ## Run static type checking for all code
 
+.PHONY: lint-c4ai
+lint-c4ai: ## Run static type checking for c4ai code
+	cd c4ai && npm run check
+
+.PHONY: lint
+lint: lint-c4ai
+
 .PHONY: backend-dev
-backend-dev: ## Run the bakcend
+backend-dev: ## Run the backend
 	DATABASE_URL=postgresql://postgres:postgres@localhost:54320/connect4 uv run uvicorn backend.server:app --reload
 
 .PHONY: all

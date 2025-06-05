@@ -1,12 +1,12 @@
-FROM denoland/deno:latest
+FROM node:24.1.0-alpine
 
 WORKDIR /app
 
-COPY /deno.json .
-COPY /deno.lock .
+COPY /package.json .
+COPY /package-lock.json .
 COPY /main.ts .
+COPY /instrumentation.ts .
 
-RUN deno cache --allow-scripts main.ts
-COPY /run.sh .
+RUN npm install
 
-CMD ["./run.sh"]
+CMD ["npm", "start"]
