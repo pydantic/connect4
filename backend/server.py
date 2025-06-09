@@ -51,20 +51,28 @@ app.include_router(api_router, prefix='/api')
 
 @app.get('/robots.txt', response_class=PlainTextResponse)
 @app.head('/robots.txt', include_in_schema=False)
-async def robots_txt(x_request_start: Annotated[str | None, fastapi.Header()] = None) -> str:
-    if x_request_start:
-        now = time.time() * 1000
-        try:
-            start = float(x_request_start) / 1000
-        except ValueError:
-            pass
-        else:
-            logfire.info(
-                'request tiemstamp {x_request_start=} {delay=:0.2f}ms',
-                x_request_start=x_request_start,
-                delay=now - start,
-            )
+async def robots_txt() -> str:
     return 'User-agent: *\nDisallow: /\n'
+
+
+@app.get('/timing', response_class=PlainTextResponse)
+@app.head('/timing', include_in_schema=False)
+async def timing(x_request_start: Annotated[str | None, fastapi.Header()] = None) -> str:
+    now = time.time() * 1000
+    if x_request_start is None:
+        return 'X-Request-Start not set'
+    try:
+        start = int(x_request_start) / 1000
+    except ValueError:
+        return 'X-Request-Start not an int'
+
+    delay = now - start
+    logfire.info(
+        'request timestamp {x_request_start=!r} {delay=:0.2f}ms',
+        x_request_start=x_request_start,
+        delay=delay,
+    )
+    return f'request timestamp {x_request_start=!r} {delay=:0.2f}ms'
 
 
 # do not register the static file serving if we're in dev mode

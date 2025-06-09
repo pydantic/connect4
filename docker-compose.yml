@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     environment:
       LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
-      LOGFIRE_ENVIRONMENT: ${LOGFIRE_ENVIRONMENT}
+      LOGFIRE_ENVIRONMENT: ${LOGFIRE_ENVIRONMENT:-dev}
       LOGFIRE_SERVICE_NAME: c4ai
     ports:
       - '9000:9000'
