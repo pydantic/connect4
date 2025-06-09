@@ -2,8 +2,10 @@ from __future__ import annotations as _annotations
 
 import os
 import sys
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Annotated
 
 import fastapi
 import logfire
@@ -49,7 +51,19 @@ app.include_router(api_router, prefix='/api')
 
 @app.get('/robots.txt', response_class=PlainTextResponse)
 @app.head('/robots.txt', include_in_schema=False)
-async def robots_txt() -> str:
+async def robots_txt(x_request_start: Annotated[str | None, fastapi.Header()] = None) -> str:
+    if x_request_start:
+        now = time.time()
+        try:
+            start = float(x_request_start) / 1_000_000
+        except ValueError:
+            pass
+        else:
+            logfire.info(
+                'request tiemstamp {x_request_start=} {delay:0.3f=}',
+                x_request_start=x_request_start,
+                delay=now - start,
+            )
     return 'User-agent: *\nDisallow: /\n'
 
 
