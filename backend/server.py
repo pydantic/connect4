@@ -60,7 +60,7 @@ async def robots_txt(x_request_start: Annotated[str | None, fastapi.Header()] = 
             pass
         else:
             logfire.info(
-                'request tiemstamp {x_request_start=} {delay:0.3f=}',
+                'request tiemstamp {x_request_start=} {delay=:0.3f}',
                 x_request_start=x_request_start,
                 delay=now - start,
             )
