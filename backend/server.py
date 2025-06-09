@@ -53,14 +53,14 @@ app.include_router(api_router, prefix='/api')
 @app.head('/robots.txt', include_in_schema=False)
 async def robots_txt(x_request_start: Annotated[str | None, fastapi.Header()] = None) -> str:
     if x_request_start:
-        now = time.time()
+        now = time.time() * 1000
         try:
-            start = float(x_request_start) / 1_000_000
+            start = float(x_request_start) / 1000
         except ValueError:
             pass
         else:
             logfire.info(
-                'request tiemstamp {x_request_start=} {delay=:0.3f}',
+                'request tiemstamp {x_request_start=} {delay=:0.2f}ms',
                 x_request_start=x_request_start,
                 delay=now - start,
             )
