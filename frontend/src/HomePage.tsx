@@ -118,7 +118,7 @@ const HomePage: Component = () => {
             </div>
             <div class={styles.cardContent}>
               <A
-                href="https://logfire-us.pydantic.dev/l/join-samuelcolvin/VKJ1XdXRvo"
+                href="https://logfire-us.pydantic.dev/l/join-samuelcolvin/2icJVbwWcX"
                 target="_blank"
                 rel="noopener noreferrer"
                 class={styles.button}
