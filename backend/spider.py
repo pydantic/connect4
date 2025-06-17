@@ -53,12 +53,16 @@ async def play(client: httpx.AsyncClient, app_base_url: str):
     print(f'starting game POST {url}...', flush=True)
     params: dict[str, AIModel] = {'orange_ai': 'local:c4', 'pink_ai': 'local:c4'}
     r = await client.get(url, params=params)
-    r.raise_for_status()
+    if not r.is_success:
+        print(f'Failed to start game: {r.status_code}:\n  {r.text}')
+        return
     game = StartGame.model_validate_json(r.content)
     while True:
         await sleep(1 + random.random() * 4)
         r = await client.post(f'{app_base_url}/api/games/{game.game_id}/move')
-        r.raise_for_status()
+        if not r.is_success:
+            print(f'Failed to make move: {r.status_code}:\n  {r.text}')
+            return
         state = GameState.model_validate_json(r.content)
         print(f'Game {game.game_id} {len(state.moves)} moves, {state.status}', flush=True)
         if state.status != 'playing':
