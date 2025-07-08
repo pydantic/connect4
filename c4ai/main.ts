@@ -61,13 +61,7 @@ app.post('/', async (req, res) => {
       return
     }
 
-    if (!data || data.length === 0) {
-      logfire.warning('No moves provided in request', { data })
-      res.status(422).type('text/plain').send('No moves provided in request')
-      return
-    }
-
-    const moves = data
+    const moves = data ?? []
 
     let next_player: Player
     if (moves.length === 0) {
