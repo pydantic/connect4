@@ -30,6 +30,7 @@ logfire.configure(
     service_name=os.getenv('RENDER_SERVICE_NAME', 'connect4'),
     service_version=opt_commit,
     code_source=code_source,
+    distributed_tracing=True,
 )
 
 

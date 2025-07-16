@@ -1,7 +1,9 @@
+import os
 from typing import Annotated
 
+import httpx
 import logfire
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import UUID4, BaseModel, Field
 
@@ -21,6 +23,13 @@ class ModelsSummary(BaseModel):
     models: list[ModelLabel]
     default_pink: ModelLabel
     default_orange: ModelLabel
+
+
+logfire_token: str = os.getenv('LOGFIRE_TOKEN')  # type: ignore[assignment]
+logfire_base_url = os.getenv('LOGFIRE_BASE_URL')
+
+assert logfire_token is not None, 'LOGFIRE_TOKEN is not set'
+assert logfire_base_url is not None, 'LOGFIRE_BASE_URL is not set'
 
 
 @api_router.get('/models')
@@ -86,6 +95,24 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
         if new_move_count == len(game_state.moves):
             await db.handle_move(game_id, game_state, ai_column)
     return game_state
+
+
+# Proxy to Logfire for client traces from the browser
+@api_router.post('/client-traces')
+async def client_traces(request: Request):
+    async with httpx.AsyncClient() as client:
+        response = await client.request(
+            method=request.method,
+            url=f'{logfire_base_url}v1/traces',
+            headers=dict(Authorization=logfire_token),
+            json=await request.json(),
+        )
+
+    return {
+        'status_code': response.status_code,
+        'body': response.text,
+        'proxied_to': f'{logfire_base_url}v1/traces',
+    }
 
 
 @api_router.get('/{path:path}')
