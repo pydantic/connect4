@@ -38,11 +38,9 @@ logfire.configure(
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
     async with DB.connect() as db:
-        logfire_token = os.environ['LOGFIRE_TOKEN']
-        logfire_base_url = os.environ['LOGFIRE_BASE_URL']
-        async with httpx.AsyncClient(
-            base_url=logfire_base_url, headers={'Authorization': logfire_token}
-        ) as httpx_client:
+        logfire_base_url = os.getenv('LOGFIRE_BASE_URL', 'https://logfire-us.pydantic.dev/')
+        headers = {'Authorization': os.environ['LOGFIRE_TOKEN']}
+        async with httpx.AsyncClient(base_url=logfire_base_url, headers=headers) as httpx_client:
             app.state.db = db
             app.state.httpx_client = httpx_client
             yield
