@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Annotated
 
 import fastapi
+import httpx
 import logfire
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -37,8 +38,14 @@ logfire.configure(
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
     async with DB.connect() as db:
-        app.state.db = db
-        yield
+        logfire_token = os.environ['LOGFIRE_TOKEN']
+        logfire_base_url = os.environ['LOGFIRE_BASE_URL']
+        async with httpx.AsyncClient(
+            base_url=logfire_base_url, headers={'Authorization': logfire_token}
+        ) as httpx_client:
+            app.state.db = db
+            app.state.httpx_client = httpx_client
+            yield
 
 
 app = fastapi.FastAPI(lifespan=lifespan)
