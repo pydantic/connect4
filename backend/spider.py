@@ -31,7 +31,7 @@ async def status(client: httpx.AsyncClient, app_base_url: str):
     print(f'checking status HEAD {app_base_url}...', flush=True)
     r = await client.head(app_base_url)
     r.raise_for_status()
-    print(f'HEAD {app_base_url} -> {status}', flush=True)
+    print(f'HEAD {app_base_url} -> {r.status_code}', flush=True)
 
 
 async def load_page(client: httpx.AsyncClient, app_base_url: str):
