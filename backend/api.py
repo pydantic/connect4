@@ -95,6 +95,8 @@ async def client_traces(request: Request):
     httpx_client: httpx.AsyncClient = request.app.state.httpx_client
 
     response = await httpx_client.post('v1/traces', json=await request.json())
+    if not response.is_success:
+        logfire.warn('prox failed {status=}', status=response.status_code, response=response.text)
 
     return {
         'status_code': response.status_code,
