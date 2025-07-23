@@ -15,6 +15,7 @@ export const ClientInstrumentationProvider: Component<ClientInstrumentationProvi
     logfire.configure({
       traceUrl: url.toString(),
       serviceName: 'frontend',
+      environment: import.meta.env.MODE === 'development' ? 'dev' : 'prod',
       serviceVersion: '0.1.0',
       // for development purposes, we want to see traces as soon as they happen, so maxExportBatchSize is set to 1.
       // in production, we want to batch traces and send them in batches
