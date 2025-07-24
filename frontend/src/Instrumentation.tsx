@@ -26,6 +26,7 @@ export const ClientInstrumentationProvider: Component<ClientInstrumentationProvi
         getWebAutoInstrumentations({
           '@opentelemetry/instrumentation-fetch': {
             propagateTraceHeaderCorsUrls: /.*/,
+            ignoreNetworkEvents: true,
           },
           // disable user interaction instrumentation, clicks are not relevant for us
           '@opentelemetry/instrumentation-user-interaction': {
