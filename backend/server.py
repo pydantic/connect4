@@ -47,7 +47,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 
 app = fastapi.FastAPI(lifespan=lifespan)
-logfire.instrument_fastapi(app, capture_headers=True)
+logfire.instrument_fastapi(app, capture_headers=True, excluded_urls=['client-traces'])
 logfire.instrument_pydantic_ai()
 logfire.instrument_asyncpg()
 logfire.instrument_httpx(capture_all=True)
