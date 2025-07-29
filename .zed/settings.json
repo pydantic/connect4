@@ -1,0 +1,9 @@
+{
+  "context_servers": {
+    "logfire": {
+      "source": "custom",
+      "command": "uvx",
+      "args": ["logfire-mcp"]
+    }
+  }
+}
