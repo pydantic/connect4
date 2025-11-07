@@ -3,7 +3,7 @@
     "logfire": {
       "source": "custom",
       "command": "uvx",
-      "args": ["logfire-mcp"]
+      "args": ["logfire-mcp@latest"]
     }
   }
 }
