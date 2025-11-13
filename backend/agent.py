@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
 import logfire
+from google.oauth2 import service_account
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
-from pydantic_ai.models.gemini import GeminiModel
-from pydantic_ai.providers.google_vertex import GoogleVertexProvider
+from pydantic_ai.models.google import GoogleModel
+from pydantic_ai.providers.google import GoogleProvider
 
 from backend.c4model import C4Model
 from backend.game import FIRST_PLAYER, Column, GameState, get_player_icon
@@ -80,10 +81,11 @@ async def generate_next_move(game_state: GameState) -> Column:
         model = game_state.pink_ai
 
     if model.startswith('google-vertex:'):
-        model = GeminiModel(
-            model[len('google-vertex:') :],
-            provider=GoogleVertexProvider(service_account_file='/etc/secrets/pai-service-account.json'),
+        credentials = service_account.Credentials.from_service_account_file(  # pyright: ignore[reportUnknownMemberType]
+            'path/to/service-account.json',
+            scopes=['https://www.googleapis.com/auth/cloud-platform'],
         )
+        model = GoogleModel(model[len('google-vertex:') :], provider=GoogleProvider(credentials=credentials))
     elif model == 'local:c4':
         model = C4Model()
 
