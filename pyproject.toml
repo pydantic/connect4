@@ -7,7 +7,7 @@ dependencies = [
     "uvicorn>=0.34.2",
     "fastapi>=0.115.12",
     "pydantic>=2.11.4",
-    "pydantic-ai-slim[openai,anthropic,groq,vertexai]>=1.16.0",
+    "pydantic-ai-slim[openai,anthropic,groq,google]>=1.16.0",
     "logfire[asyncpg,fastapi,httpx]>=4.14.2",
     "asyncpg>=0.30.0",
 ]
