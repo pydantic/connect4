@@ -1,0 +1,28 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(cat:*)",
+			"Bash(ls:*)",
+			"Bash(grep:*)",
+			"mcp__logfire__sql_reference",
+			"mcp__logfire__get_logfire_records_schema",
+			"mcp__logfire__arbitrary_query",
+			"mcp__logfire__logfire_link",
+			"mcp__logfire__schema_reference",
+			"Bash(make:*)",
+			"Bash(docker:*)",
+			"Bash(pnpm import:*)",
+			"Bash(pnpm install)",
+			"Bash(pnpm run build)",
+			"Bash(pnpm -w run build:*)",
+			"Bash(pnpm install:*)",
+			"Bash(pnpm --version:*)",
+			"Bash(pnpm outdated:*)",
+			"Bash(pnpm view:*)",
+			"Bash(pnpm --filter ./frontend update @pydantic/logfire-browser)",
+			"Bash(pnpm update:*)"
+		],
+		"deny": []
+	},
+	"enableAllProjectMcpServers": false
+}

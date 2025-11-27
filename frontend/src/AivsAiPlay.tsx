@@ -23,7 +23,7 @@ const AiVsAiPlay: Component = () => {
     setIsLoading(true)
     setErrorMessage(null) // Clear any previous errors
     try {
-      const gameState = await getGameState(gameId)
+      const gameState = await getGameState(gameId!)
       console.log('Received game state:', gameState)
 
       if (gameState.pinkAI === null) {
@@ -98,7 +98,7 @@ const AiVsAiPlay: Component = () => {
     setErrorMessage(null)
 
     try {
-      const newState = await makeMove(gameId)
+      const newState = await makeMove(gameId!)
       applyGameState(newState)
 
       // If the game is still going, schedule the next move

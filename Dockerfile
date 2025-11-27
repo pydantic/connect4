@@ -1,21 +1,25 @@
 # Stage 1: Frontend builder
 FROM node:18 AS frontend-builder
 
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@10 --activate
+
 # Set working directory
 WORKDIR /app
 
-# Copy package files for frontend
-COPY package.json package-lock.json ./
+# Copy package files for workspace
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json ./frontend/
+COPY c4ai/package.json ./c4ai/
 
 # Install frontend dependencies
-RUN npm install
+RUN pnpm install --frozen-lockfile
 
 # Copy frontend source code
 COPY frontend ./frontend/
 
 # Build frontend
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Python backend
 FROM python:3.13-alpine
