@@ -26,7 +26,7 @@ class ModelsSummary(BaseModel):
 
 @api_router.get('/models')
 async def get_models() -> ModelsSummary:
-    pink: AIModel = 'gateway/anthropic:claude-4-5-sonnet-latest'
+    pink: AIModel = 'gateway/anthropic:claude-sonnet-4-5'
     orange: AIModel = 'gateway/openai:gpt-4.1'
     return ModelsSummary(
         models=[ModelLabel(value=k, label=v) for k, v in model_labels.items()],
