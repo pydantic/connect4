@@ -41,3 +41,10 @@ jobs:
           extra_args: --all-files --verbose
         env:
           SKIP: no-commit-to-branch
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: docker compose build
