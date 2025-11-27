@@ -4,8 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      PYDANTIC_AI_GATEWAY_API_KEY: ${PYDANTIC_AI_GATEWAY_API_KEY}
       LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
       C4AI_URL: http://c4ai:9000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/connect4

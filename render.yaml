@@ -9,11 +9,7 @@ services:
     envVars:
       - key: LOGFIRE_TOKEN
         sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: GROQ_API_KEY
+      - key: PYDANTIC_AI_GATEWAY_API_KEY
         sync: false
       - key: C4AI_URL
         value: 'https://c4ai.onrender.com'

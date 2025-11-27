@@ -10,8 +10,8 @@ logfire.instrument_pydantic_ai()
 
 
 async def main():
-    pink_ai = 'openai:gpt-4o'
-    orange_ai = 'openai:gpt-4o'
+    pink_ai = 'gateway/openai:gpt-4.1'
+    orange_ai = 'gateway/openai:gpt-4.1'
     game_state = GameState(pink_ai=pink_ai, orange_ai=orange_ai)
     while game_state.status == 'playing':
         print(game_state.render())
