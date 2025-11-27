@@ -23,7 +23,7 @@ const HumanAIPlay: Component = () => {
     setErrorMessage(null) // Clear any previous errors
     try {
       console.log('Loading game state for gameId:', gameId)
-      const gameState = await getGameState(gameId)
+      const gameState = await getGameState(gameId!)
       console.log('Received game state:', gameState)
 
       if (gameState.pinkAI != null) {
@@ -124,7 +124,7 @@ const HumanAIPlay: Component = () => {
     try {
       console.log(`Making move in column ${columnIndex} for game ${gameId}`)
       // Call the API to make the move and get updated game state (including AI's response move)
-      const gameState = await makeMove(gameId, columnIndex)
+      const gameState = await makeMove(gameId!, columnIndex)
       console.log('Received updated game state after move:', gameState)
 
       // Apply the server-returned game state (overwrites our local changes)
