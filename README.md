@@ -22,5 +22,5 @@ make backend-dev
 Finally, run the frontend with
 
 ```bash
-npm run dev
+pnpm run dev
 ```

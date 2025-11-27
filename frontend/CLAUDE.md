@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-- `npm install` - Install dependencies
-- `npm run build` - Build for production
-- `npm run typecheck` - Run the TypeScript type checker
+- `pnpm install` - Install dependencies
+- `pnpm run build` - Build for production
+- `pnpm run typecheck` - Run the TypeScript type checker
 
 ## Code Style
 

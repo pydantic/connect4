@@ -12,15 +12,16 @@
 .PHONY: install
 install: .uv .pre-commit ## Install the package, dependencies, and pre-commit for local development
 	uv sync --frozen
+	pnpm install
 	pre-commit install --install-hooks
 
 .PHONY: format-frontend
 format-frontend: ## Format frontend code
-	npm run format
+	pnpm run format
 
 .PHONY: format-c4ai
 format-c4ai: ## Format the code
-	cd c4ai && npm run format
+	cd c4ai && pnpm run format
 
 .PHONY: format-py
 format-py: ## Format python code
@@ -32,11 +33,11 @@ format: format-frontend format-c4ai format-py ## Format all code
 
 .PHONY: typecheck-frontend
 typecheck-frontend: ## Run static type checking for frontend code
-	npm run typecheck
+	pnpm run typecheck
 
 .PHONY: typecheck-c4ai
 typecheck-c4ai: ## Run static type checking for c4ai code
-	cd c4ai && npm run typecheck
+	cd c4ai && pnpm run typecheck
 
 .PHONY: typecheck-py
 typecheck-py: ## Run static type checking for python code
@@ -48,7 +49,7 @@ typecheck: typecheck-frontend typecheck-c4ai typecheck-py ## Run static type che
 
 .PHONY: lint-c4ai
 lint-c4ai: ## Run static type checking for c4ai code
-	cd c4ai && npm run check
+	cd c4ai && pnpm run check
 
 .PHONY: lint
 lint: lint-c4ai

@@ -23,10 +23,10 @@ export LOGFIRE_BASE_URL=https://logfire-us.pydantic.dev/  # or https://logfire-e
 make backend-dev
 
 # Frontend (port 3000)
-npm run dev
+pnpm run dev
 
 # C4AI minimax service (port 9000) - usually not needed in dev
-cd c4ai && npm run dev
+cd c4ai && pnpm run dev
 ```
 
 ### Code Quality
@@ -46,7 +46,7 @@ make typecheck-c4ai      # C4AI with tsc
 
 ### Production Build
 ```bash
-npm run build            # Build frontend for production (outputs to frontend/dist)
+pnpm run build           # Build frontend for production (outputs to frontend/dist)
 ```
 
 ## Architecture

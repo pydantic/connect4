@@ -8,9 +8,9 @@
   "scripts": {
     "format": "prettier --write -- frontend",
     "lint": "prettier --check -- frontend",
-    "typecheck": "npm run --workspace frontend typecheck",
-    "dev": "npm run --workspace frontend dev",
-    "build": "npm run --workspace frontend build"
+    "typecheck": "pnpm --filter ./frontend typecheck",
+    "dev": "pnpm --filter ./frontend dev",
+    "build": "pnpm --filter ./frontend build"
   },
   "prettier": {
     "singleQuote": true,
@@ -22,9 +22,5 @@
   },
   "devDependencies": {
     "prettier": "^3.5.3"
-  },
-  "dependencies": {
-    "@kobalte/core": "^0.13.9",
-    "@solidjs/router": "^0.15.3"
   }
 }
