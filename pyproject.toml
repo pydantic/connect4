@@ -7,10 +7,10 @@ dependencies = [
     "uvicorn>=0.34.2",
     "fastapi>=0.115.12",
     "pydantic>=2.11.4",
-    "pydantic-ai-slim[openai,anthropic,groq,google]>=1.24.0",
+    "pydantic-ai-slim[openai,anthropic,groq,google]>=1.36.0",
     "logfire[asyncpg,fastapi,httpx]>=4.14.2",
     "asyncpg>=0.30.0",
-    "pydantic-evals>=1.24.0",
+    "pydantic-evals>=1.36.0",
 ]
 requires-python = ">=3.12"
 authors = [

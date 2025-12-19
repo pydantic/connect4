@@ -82,10 +82,13 @@ async def game_move(db: Annotated[DB, Depends(DB.get_dep)], game_id: UUID4, colu
     logfire.info('Game status: {game_state.status}', game_id=game_id, game_state=game_state)
     if game_state.status == 'playing':
         ai_column = await generate_next_move(game_state)
-        # change there's been no more moves before applying this move
+        # check there's been no more moves before applying this move
         new_move_count = await db.get_move_count(game_id)
         if new_move_count == len(game_state.moves):
             await db.handle_move(game_id, game_state, ai_column)
+
+    if game_state.status != 'playing':
+        logfire.info('Final game status: {game_state.status}', game_id=game_id, game_state=game_state)
     return game_state
 
 
