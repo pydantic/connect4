@@ -51,7 +51,7 @@ async def load_page(client: httpx.AsyncClient, app_base_url: str):
 async def play(client: httpx.AsyncClient, app_base_url: str):
     url = f'{app_base_url}/api/games/start'
     print(f'starting game POST {url}...', flush=True)
-    params: dict[str, AIModel] = {'orange_ai': 'local:c4', 'pink_ai': 'local:c4'}
+    params: dict[str, AIModel] = {'orange_ai': 'local:c4', 'pink_ai': 'gateway/groq:openai/gpt-oss-120b'}
     r = await client.get(url, params=params)
     if not r.is_success:
         print(f'Failed to start game: {r.status_code}:\n  {r.text}')
