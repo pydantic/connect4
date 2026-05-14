@@ -12,7 +12,7 @@ from backend.game import AIModel, GameState
 async def main():
     await sleep(2)
     app_base_url = os.environ['APP_BASE_URL']
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=60) as client:
         while True:
             delay = 15 + random.random() * 45
             print(f'Waiting {delay:.0f}s...', flush=True)
